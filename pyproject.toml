@@ -3,6 +3,7 @@ name = "acip"
 version = "1.0.0"
 description = "Codebase of the ACIP project"
 readme = "README.md"
+authors = [ { name = "Merantix Momentum GmbH" } ]
 requires-python = ">=3.11"
 dependencies = [
     "torch>=2.5.1",
@@ -37,6 +38,16 @@ dev = [
     "pytest-xdist>=3.5.0",
     "pytest-timeout>=2.3.1",
 ]
+
+[tool.hatch.build.targets.sdist]
+include = ["acip"]
+
+[tool.hatch.build.targets.wheel]
+include = ["acip"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.black]
 line-length = 120
