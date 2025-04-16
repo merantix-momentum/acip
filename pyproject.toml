@@ -1,0 +1,108 @@
+[project]
+name = "acip"
+version = "1.0.0"
+description = "Codebase of the ACIP project"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.5.1",
+    "torchvision>=0.20.1",
+    "torchaudio>=2.5.1",
+    "transformers>=4.46.2",
+    "wandb>=0.18.7",
+    "accelerate>=1.1.1",
+    "tqdm>=4.67.0",
+    "peft>=0.14.0",
+    "python-dotenv>=1.0.1",
+    "numpy>=2.1.3",
+    "lightning>=2.4.0",
+    "datasets>=3.1.0",
+    "hydra-core>=1.3.2",
+    "rootutils>=1.0.7",
+    "hydra-colorlog>=1.2.0",
+    "flatten-dict>=0.4.2",
+    "pre-commit>=4.0.1",
+    "plotly>=5.24.1",
+    "sentencepiece>=0.2.0",
+    "lm-eval>=0.4.7",
+    "bitsandbytes>=0.45.0 ; sys_platform == 'linux'",
+    "mxm-scaffold>=0.18.2",
+    "fvcore>=0.1.5.post20221221",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.4",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.5.0",
+    "pytest-timeout>=2.3.1",
+]
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+
+[tool.isort]
+case_sensitive = false
+known_first_party = []
+known_third_party = [
+    "wandb",
+]
+line_length = 120
+order_by_type = false
+profile = "black"
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+ignore = [
+    # E203: Space before :. Deactivated because of incompatibility with black, see https://github.com/ambv/black#slices.
+    "E203",
+    # E402: Module level import not at top of file. We sometimes need this (e.g. mparams).
+    "E402",
+    # W605: Invalid escape sequence 'x'. Necessary because of Flake8 update in
+    #       https://github.com/merantix/core/commit/dee61ff623b2cb08d6827afcea502edb9a8f76fb
+    "W605",
+    # Exceptions for the type hinting plugin, flake8-annotations
+    "ANN002", # Missing type annotation for *args
+    "ANN003", # Missing type annotation for **kwargs
+    "ANN101", # Missing type annotation for self in method
+    "ANN102", # Missing type annotation for cls in classmethod
+    "ANN204", # Missing return type annotation for special method, e.g. init
+    # The following is for the docstring plugin, to make it less whiny. We are happy if we have docs on all functions
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D104", # Missing docstring in public package
+    "D202", # No blank lines allowed after function docstring
+    "D205", # 1 blank line required between summary line and description
+    "D212", # Multi-line docstring summary should start at the first line
+    "D415", # First line should end with a period, question mark, or exclamation point
+]
+
+[tool.ruff.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+explicit_package_bases = true
+ignore_missing_imports = true
+implicit_optional = true
+allow_redefinition = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-p no:warnings -v"
+norecursedirs = [".*", "build", "dist", "CVS", "_darcs", "{arch}", "*.egg"]
+
+[tool.coverage.report]
+exclude_lines = [
+    # if a line gets matched with this, we dont count it as missing in the coverage report
+    # keep default behaviour of coverage
+    "pragma: no cover",
+    # skip lines that raise a specific error (^\s matches beginning of line + any whitespace length)
+    "^\\s*raise NotImplementedError",
+    "^\\s*raise AssertionError",
+    "^\\s*raise ValueError",
+    # skip lines that are only "pass"
+    "^\\s*pass\\s*$",
+]
+
