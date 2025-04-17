@@ -55,7 +55,9 @@ include = '\.pyi?$'
 
 [tool.isort]
 case_sensitive = false
-known_first_party = []
+known_first_party = [
+    "scaffold",
+]
 known_third_party = [
     "wandb",
 ]
