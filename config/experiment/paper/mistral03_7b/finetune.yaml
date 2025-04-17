@@ -2,3 +2,6 @@
 
 defaults:
   - override /model/base@model: mistral03_7b
+
+run:
+  series: paper

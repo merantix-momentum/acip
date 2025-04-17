@@ -20,7 +20,7 @@ run:
   timestamp: ${now:%Y-%m-%d}_${now:%H-%M-%S}
   id: ???  # used as name of parent directory to store all run outputs & artifacts
   group: ???
-  series: paper_v3  # (experiment) series
+  series: default  # (experiment) series
   type: default  # describes the type of entrypoint, e.g., "compress" or "finetune"
   tags: ${merge:${run.tags_default},${run.tags_custom}}
   tags_default: []  # should be set by entrypoints

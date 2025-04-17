@@ -21,7 +21,7 @@ paths:
 run:
   id: ${run.type}__${model.identifier}  # used to render path for model loading
   group: ${model.identifier}__${run.series}
-  series: paper_v3  # used to render path for model loading
+  series: default  # used to render path for model loading
   type: push_to_hub
   path: ${paths.run_dir}/${run.id}
   print_cfg: true  # print the fully resolved config before running

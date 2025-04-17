@@ -2,3 +2,6 @@
 
 defaults:
   - override /model/base@model: qwen25_7b
+
+run:
+  series: paper

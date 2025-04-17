@@ -7,3 +7,6 @@ training:
   batch_size: 2
   trainer:
     accumulate_grad_batches: 2
+
+run:
+  series: paper

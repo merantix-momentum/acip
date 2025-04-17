@@ -16,3 +16,6 @@ training:
         - v_proj.base_layer.parametrization.mask
         - o_proj.base_layer.parametrization.mask
         - q_proj.base_layer.parametrization.mask
+
+run:
+  series: paper

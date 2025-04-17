@@ -12,3 +12,4 @@ training:
 
 run:
   id: ${run.type}__${model.identifier}__with_up_proj
+  series: paper
