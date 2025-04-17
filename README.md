@@ -81,14 +81,16 @@ To run the ACIP code to compress or fine-tune your own model, please clone this 
 ```bash
 git clone https://github.com/MerantixMomentum/acip.git
 ```
-To install all dependencies, we recommend using [Poetry](https://python-poetry.org/) with Python 3.11 as base interpreter (Python 3.12 should work as well).
-Once Poetry is set up, you can just run
+To install all dependencies, we recommend using [uv](https://docs.astral.sh/uv/) with Python 3.11 as base interpreter (Python 3.12 should work as well).
+Once uv is set up, you can just run
 ```bash
-poetry install --sync
+uv sync
 ```
 to install the requirements as well as the [acip](acip) package (see [pyproject.toml](pyproject.toml) for details).
 
-If you want to use a different package manager like Conda or uv, you can also simply install all pinned dependencies from the provided [requirements.txt](requirements.txt).
+If you want to use a different package manager like Conda, you can also simply install all pinned dependencies from the provided [requirements.txt](requirements.txt).
+
+> ❗️ Custom environment variables are managed via dot-env. Before using the repo, please create a `.env` file from [`.env.example`](.env.example) and fill in the required values.
 
 ## Running ACIP
 
