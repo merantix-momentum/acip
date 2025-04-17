@@ -48,6 +48,7 @@ def main(cfg: DictConfig) -> None:
             model = model_factory()
             if torch.cuda.is_available():
                 model.cuda()
+            model.config.name_or_path = cfg.acip.hub.repo_id
         logger.info("Model created.")
 
         # Build tokenizer
