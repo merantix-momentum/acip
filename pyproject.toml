@@ -71,8 +71,6 @@ ignore = [
     "E203",
     # E402: Module level import not at top of file. We sometimes need this (e.g. mparams).
     "E402",
-    # W605: Invalid escape sequence 'x'. Necessary because of Flake8 update in
-    #       https://github.com/merantix/core/commit/dee61ff623b2cb08d6827afcea502edb9a8f76fb
     "W605",
     # Exceptions for the type hinting plugin, flake8-annotations
     "ANN002", # Missing type annotation for *args
