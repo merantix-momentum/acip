@@ -1,0 +1,41 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: (?x)^(wandb|docs/_build|sandbox)
+repos:
+  # TODO replace with ruff
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        additional_dependencies: [--index-url=https://pypi.org/simple/]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.8
+    hooks:
+      - id: ruff
+        args: [--fix]
+        additional_dependencies: [--index-url=https://pypi.org/simple/]
+      - id: ruff-format
+        additional_dependencies: [--index-url=https://pypi.org/simple/]
+  # TODO replace with prettier
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.33.0
+    hooks:
+      - id: yamllint
+        args: [-d, '{extends: relaxed, rules: {line-length: {max: 120}}}']
+        exclude: ^(infrastructure/charts/[^/]+/templates|infrastructure/kubernetes/managed_cluster/flux-system|infrastructure/kubernetes/istio|.*pnpm-lock\.yaml)
+        additional_dependencies: [--index-url=https://pypi.org/simple/]
+  # TODO replace with prettier
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.3
+    hooks:
+      - id: yamlfmt
+        name: yamlfmt
+        args: [--sequence, '4', --offset, '2', --mapping, '2', --width, '120', --implicit_start, --preserve-quotes]
+        exclude: ^(infrastructure/charts/[^/]+/templates|infrastructure/kubernetes/managed_cluster/flux-system|infrastructure/kubernetes/istio|.*pnpm-lock\.yaml)
+        additional_dependencies: [--index-url=https://pypi.org/simple/]
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.84.0
+    hooks:
+      - id: terraform_fmt
+        args:
+          - --args=-diff
