@@ -1,0 +1,42 @@
+# @package _global_
+
+# Config of ACIP push-to-hub entrypoint (see acip.entrypoints.acip_push_to_hub).
+
+defaults:
+  # Hydra-related config.
+  - /hydra: no_output
+  # Path-related config.
+  - paths: default
+  # Model-related configs.
+  - /model/model_factory@model: acip_finetune  # same factory-type as finetune, i.e., loading an existing ACIP model
+  - /model/tokenizer_factory@model: default
+  - /model/base@model: default  # it's important that base comes after tokenizer_factory because it may overwrite it
+  # Load behavior of the ACIP model.
+  - storage@acip: acip_push_to_hub
+
+paths:
+  # Add the current run series to the parent run directory.
+  run_dir: ${paths.artifact_dir}/runs/${run.series}
+
+run:
+  id: ${run.type}__${model.identifier}  # used to render path for model loading
+  group: ${model.identifier}__${run.series}
+  series: paper_v3  # used to render path for model loading
+  type: push_to_hub
+  path: ${paths.run_dir}/${run.id}
+  print_cfg: true  # print the fully resolved config before running
+  dry_run: false  # will only compile the config and stop the run
+
+acip:
+  # Configs to load the ACIP model as is.
+  quantize_weights: false
+  prune_to_ratio:
+  measure_ratio_full: false
+  compress_and_unparametrize: false
+  # Hub-specific config.
+  hub:
+    push_model: true  # otherwise, only accompanying files are pushed
+    # Required for README rendering.
+    repo_id: MerantixMomentum/acip_${model.identifier}
+    license: apache-2.0
+    license_text: This model is released under the ${acip.hub.license} license.

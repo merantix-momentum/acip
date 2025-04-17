@@ -1,0 +1,5 @@
+defaults:
+  - llama2_7b
+
+identifier: llama2_13b
+base_model_name_or_path: meta-llama/Llama-2-13b-hf

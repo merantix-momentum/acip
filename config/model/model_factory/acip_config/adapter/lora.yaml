@@ -1,0 +1,16 @@
+model_factory:
+  pretrained_model_config:
+    adapter_config:
+      _target_: acip.core.parametrized_model.AdapterConfig
+      peft_config:
+        _target_: peft.LoraConfig
+        r: 32
+        lora_alpha: 16
+        lora_dropout: 0.05
+        task_type: CAUSAL_LM
+        target_modules: all-linear
+        # Exclude submodules of parametrized modules because we only target the original network layers.
+        exclude_modules:
+          - ortho
+          - parametrization
+          - base

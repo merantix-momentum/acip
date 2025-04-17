@@ -1,0 +1,15 @@
+# At fit start and end, we perform a text generation test.
+
+callbacks:
+  model_benchmarker:
+    _target_: acip.training.benchmarking.ModelBenchmarker
+    evaluator:
+      _target_: acip.eval.evaluator.ComposedModelEvaluator
+      evaluators:
+        generation:
+          _target_: acip.eval.eval_generation.GenerationModelEvaluator
+          tokenizer_factory: ${model.tokenizer_factory}
+          generation_prompts:
+            - The capital of Germany is called
+    test_ratios: ${oc.select:acip.test_ratios, null}  # acip.test_ratios does not exist for fine-tuning, therefore None
+    measure_ratio_full: ${acip.measure_ratio_full}

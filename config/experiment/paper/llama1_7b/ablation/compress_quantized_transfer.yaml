@@ -1,0 +1,21 @@
+# @package _global_
+
+# Ablation experiment: Load score map and LoRA from "compressed_quantized" run and evaluate the ACIP model with
+# singular-vector matrices in full precision. This does not require any gradient steps.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+training:
+  trainer:
+    max_steps: 0  # no optimization
+
+acip:
+  quantize_weights: false
+  load:
+    model_name_or_path: ${paths.run_dir}/${run.type}__${model.identifier}__quant/model
+    init_empty_weights: false  # only the score map and LoRA are loaded, so parametrize from scratch
+
+run:
+  id: ${run.type}__${model.identifier}__quant_transfer

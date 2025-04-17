@@ -1,0 +1,9 @@
+model_factory:
+  pretrained_model_config:
+    parametrization_config:
+      _target_: acip.core.parametrized_model.ParametrizationConfig
+      module_factory_cls: svd
+      module_factory_kwargs:
+        mask_func: ste  # straight-through estimator
+        mask_scaling_factor: 2e-2  # make scale of mask values comparable to other tunable parameters (e.g., LoRA)
+      target_modules: all-linear  # parametrize all linear layers (same semantics as Huggingface's PeftConfig)

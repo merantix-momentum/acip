@@ -1,0 +1,11 @@
+# @package _global_
+
+# Ablation experiment: Evaluate a model with singular values as score map instead of ACIP.
+# This does not require any gradient steps.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /training/acip@training: sv_score_map
+
+run:
+  id: ${run.type}__${model.identifier}__sv_score_map

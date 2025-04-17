@@ -1,0 +1,45 @@
+# @package _global_
+
+# Base config for entrypoints. It compiles all required general sub-configs.
+
+defaults:
+  # Hydra-related config.
+  - /hydra: default
+  # Path-related config.
+  - paths: default
+  # Disable scaffold hydra logging (we use the colorlog plugin instead).
+  - override /scaffold/entrypoint/logging@logging: none
+
+paths:
+  # Add the current run series to the parent run directory.
+  run_dir: ${paths.artifact_dir}/runs/${run.series}
+
+# Define general run sub-config with important metadata.
+# The intended run organization hierarchy is series > group > id.
+run:
+  timestamp: ${now:%Y-%m-%d}_${now:%H-%M-%S}
+  id: ???  # used as name of parent directory to store all run outputs & artifacts
+  group: ???
+  series: paper_v3  # (experiment) series
+  type: default  # describes the type of entrypoint, e.g., "compress" or "finetune"
+  tags: ${merge:${run.tags_default},${run.tags_custom}}
+  tags_default: []  # should be set by entrypoints
+  tags_custom: []  # optional tags set by specific experiments
+  path: ${paths.run_dir}/${run.id}
+  save: []  # what artifacts to save
+  print_cfg: true  # print the fully resolved config before running
+  dry_run: false  # will only compile the config and stop the run
+
+# Define WandB sub-config. Set to None to disable.
+wandb:
+  # Base parameters are read from environment variables to avoid hardcoding.
+  base_url: ${oc.env:WANDB_BASE_URL}
+  entity: ${oc.env:WANDB_ENTITY}
+  project: ${oc.env:WANDB_PROJECT}
+  dir: /tmp/wandb  # use ${run.path} to keep the local wandb logs (can be huge)
+  mode: online
+  # Adopt the run organization hierarchy from run sub-config.
+  name: ${run.id}
+  tags: ${run.tags}
+  job_type: ${run.type}
+  group: ${run.group}

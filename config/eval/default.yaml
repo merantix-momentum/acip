@@ -1,0 +1,10 @@
+# Config to build a dict config of default model evaluators.
+# This config is not used directly but serves as a "catalog" for model benchmarking and monitoring callbacks where
+# suitable evaluators can be selected from here.
+
+defaults:
+  - evaluator/model_size@evaluator.model_size
+  - evaluator/ppl@evaluator.ppl
+  - evaluator/lm_eval@evaluator.lm_eval
+  - evaluator/efficiency@evaluator.efficiency
+  - evaluator/generation@evaluator.generation

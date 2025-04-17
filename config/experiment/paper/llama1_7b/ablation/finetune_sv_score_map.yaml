@@ -1,0 +1,14 @@
+# @package _global_
+
+# Ablation experiment: Fine-tune the model from "compress_sv_score_map" to recover downstream performance.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: finetune
+
+acip:
+  finetune_steps: 5000  # sufficient for convergence
+  load:
+    model_name_or_path: ${paths.run_dir}/compress__${model.identifier}__sv_score_map/model
+
+run:
+  id: ${run.type}__${model.identifier}__ratio${acip.prune_to_ratio}__sv_score_map

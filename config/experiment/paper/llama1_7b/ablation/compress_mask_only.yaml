@@ -1,0 +1,19 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP without tuning LoRA so that only the masks are tuned.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+training:
+  seed: 2  # the mask-only variant is quite sensitive to the seed (instabilities during training might occur)
+  optimizer_factory:
+    group_params:
+      tuning_params: []  # disable tuning of low-rank adapters
+
+acip:
+  post_tune_steps:
+
+run:
+  id: ${run.type}__${model.identifier}__mask_only

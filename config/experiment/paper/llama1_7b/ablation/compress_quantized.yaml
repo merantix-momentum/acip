@@ -1,0 +1,13 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP with quantized singular-vector matrices. Masks and LoRA remain in full precision.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+acip:
+  quantize_weights: true
+
+run:
+  id: ${run.type}__${model.identifier}__quant

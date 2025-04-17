@@ -1,0 +1,14 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP where all linear layers are targeted. See paper appendix for details.
+
+defaults:
+  - override /model/base@model: llama2_13b
+
+training:
+  batch_size: 2
+  trainer:
+    accumulate_grad_batches: 2
+
+run:
+  id: ${run.type}__${model.identifier}__with_up_proj

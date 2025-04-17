@@ -1,0 +1,21 @@
+# @package _global_
+
+# Ablation experiment: Run fine-tuning of an ACIP model (that was tuned with full precision)
+# with quantized singular-vector matrices.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: finetune
+
+training:
+  callbacks:
+    model_benchmarker:
+      evaluator:
+        evaluators:
+          generation:
+            generation_prompts: []  # avoid random "illegal memory access" errors of PyTorch CUDA
+
+acip:
+  quantize_weights: true
+
+run:
+  id: ${run.type}__${model.identifier}__ratio${acip.prune_to_ratio}__quant

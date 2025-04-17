@@ -1,0 +1,6 @@
+defaults:
+  - base
+
+load:
+  # Load model from corresponding ACIP run
+  model_name_or_path: ${paths.run_dir}/compress__${model.identifier}/model

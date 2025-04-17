@@ -1,0 +1,13 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP for different number of post-tuning steps (0, 100, 500, 1000).
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+acip:
+  post_tune_steps: 1000
+
+run:
+  id: ${run.type}__${model.identifier}__post_tune_steps${acip.post_tune_steps}

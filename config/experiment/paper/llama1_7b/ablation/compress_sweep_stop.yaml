@@ -1,0 +1,15 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP for different stopping criteria, i.e., at which compression ratio to stop
+# (0.2, 0.3, 0.4, 0.6, 0.8, 0.95).
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+acip:
+  stop_ratio: 0.2
+  test_ratios: [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+
+run:
+  id: ${run.type}__${model.identifier}__sweep_stop${acip.stop_ratio}

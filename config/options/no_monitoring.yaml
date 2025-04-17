@@ -1,0 +1,6 @@
+# @package _global_
+
+# Disable model monitoring
+
+defaults:
+  - override /training/monitoring@training: []

@@ -1,0 +1,27 @@
+# https://hydra.cc/docs/configure_hydra/intro/
+
+defaults:
+  # enable color logging
+  - override hydra_logging: colorlog
+  - override job_logging: colorlog
+
+# Set up the output directory according to the run path.
+run:
+  dir: ${run.path}/hydra/runs/${run.timestamp}
+sweep:
+  dir: ${run.path}/hydra/multiruns/${run.timestamp}
+  subdir: ${hydra.job.num}
+
+# Tell hydra to put the logger for our code to DEBUG ("acip" serves as prefix).
+verbose: [__main__, hydra, acip]
+# Otherwise logging is INFO
+job_logging:
+  root:
+    level: INFO
+  handlers:
+    file:
+      # Incorporates fix from https://github.com/facebookresearch/hydra/pull/2242
+      filename: ${hydra.runtime.output_dir}/run.log
+
+job:
+  name: ${run.id}

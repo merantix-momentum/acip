@@ -1,0 +1,62 @@
+# @package _global_
+
+# Config of ACIP compress entrypoint (see acip.entrypoints.acip_compress).
+
+defaults:
+  # Load ACIPEntrypointConf and base config.
+  - /acip/ACIPEntrypointConf@_here_
+  - base
+  # Data-related configs.
+  - /data: c4
+  # Evaluation-related configs.
+  - /eval: default
+  # Model-related configs.
+  - /model/model_factory@model: acip_compress
+  - /model/tokenizer_factory@model: default
+  - /model/base@model: default  # it's important that base comes after tokenizer_factory because it may overwrite it
+  # Training-related configs.
+  - /training: base
+  - /training/objective@training: acip_compress
+  - /training/optimizer@training: acip_compress
+  - /training/acip@training: default
+  - /training/monitoring@training:
+      - gradient_monitor
+      - model_monitor_compress
+  - /training/benchmarking@training:
+      - default
+  # Save and load behavior of the ACIP model.
+  - storage@acip: acip_compress_full
+  - _self_
+  # Experiment and options configs, overwriting parts of this entrypoint.
+  - /experiment:
+  - /options:
+
+run:
+  id: ${run.type}__${model.identifier}  # add a suffix in ablation experiments
+  group: ${data.identifier}__${model.identifier}__${run.series}  # group by dataset & model
+  type: compress
+  tags_default:
+    - type:${run.type}
+    - series:${run.series}
+    - model:${model.identifier}
+    - data:${data.identifier}
+  save:
+    - config
+    - results
+    - model
+
+# Define ACIP-compress-specific config.
+acip:
+  cache_init_model: false
+  quantize_weights: false  # optionally quantize U and V weights of SVD parametrization
+  stop_ratio: 0.4  # compression ratio at which to stop ACIP (subsequent compression should not be lower)
+  stop_score_map_at_ratio: # means that the score map update continues until the stopping criterion reached
+  measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
+  post_tune_steps: 1000  # how many steps to continue optimizing adapters after ACIP stopped
+  # Parameters of the ACIP regularization parameter scheduler (see acip.core.ACIPScheduler).
+  reg_scheduler_start_weight: 1e-3
+  reg_scheduler_update_every: 4
+  reg_scheduler_update_factor: 1.01
+  lr: 5e-5
+  # Compression ratios at which to evaluate the final model. None means the ACIP model is evaluated at it is.
+  test_ratios: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]

@@ -1,0 +1,5 @@
+_target_: acip.eval.eval_lm_eval.LMEvalModelEvaluator
+tokenizer_factory: ${model.tokenizer_factory}
+task_names: [piqa, hellaswag, winogrande, arc_challenge, arc_easy, openbookqa, mathqa]
+batch_size: 64  # adapt to the size of your GPU
+num_fewshots: 0

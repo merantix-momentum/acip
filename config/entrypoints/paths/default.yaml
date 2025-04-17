@@ -1,0 +1,11 @@
+# Config to compile all required paths and directories.
+
+root_dir: ${oc.env:PROJECT_ROOT}  # PROJECT_ROOT is set by setup_root in the entrypoint
+
+# Note that these paths are parent directories. Individual runs will create subdirectories.
+artifact_dir: ${paths.root_dir}/artifacts  # parent directory for all artifacts
+data_dir: ${paths.artifact_dir}/data  # default directory for datasets
+run_dir: ${paths.artifact_dir}/runs  # default directory for run outputs
+cache_dir: ${paths.artifact_dir}/cache  # default directory for cache (make sure this is compatible the HF_HOME environment variable)
+
+work_dir: ${hydra:runtime.cwd}

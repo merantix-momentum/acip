@@ -1,0 +1,13 @@
+defaults:
+  - base
+
+save:
+  path: ${run.path}/model
+  # Space-efficient save filter, all other model parameters are determined by the (SVD) parametrization.
+  # Set acip.load.init_empty_weights to false when loading from this compact format.
+  include_filter:
+    - _score
+    - lora_A.default.weight
+    - lora_B.default.weight
+    - lora_A.default.bias
+    - lora_B.default.bias

@@ -1,0 +1,8 @@
+# @package _global_
+
+# Enable verbose job logging for hydra.
+
+hydra:
+  job_logging:
+    root:
+      level: DEBUG

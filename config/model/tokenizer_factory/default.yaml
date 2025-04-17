@@ -1,0 +1,6 @@
+tokenizer_factory:
+  _target_: acip.model.tokenizer_factory.AutoTokenizerFactory
+  model_name_or_path: ${model.base_model_name_or_path}
+  tokenizer_kwargs:
+    use_fast: true
+    padding_side: left

@@ -1,0 +1,9 @@
+# @package _global_
+
+defaults:
+  - override /model/base@model: llama2_13b
+
+training:
+  batch_size: 2
+  trainer:
+    accumulate_grad_batches: 2

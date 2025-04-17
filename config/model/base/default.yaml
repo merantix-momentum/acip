@@ -1,0 +1,10 @@
+# Used as part of the run id. Should be compatible with directory naming conventions.
+# If needed override with a more descriptive name.
+identifier: default
+
+# Huggingface repo or local path pointing to the base model that should be used for ACIP.
+# Using a small model as default here to allow for quick (local) testing.
+base_model_name_or_path: facebook/opt-125m
+
+# Context length to use for model evaluation (does not have to match the max model context length).
+ctx_length: 2048

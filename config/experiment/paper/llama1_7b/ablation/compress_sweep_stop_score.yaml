@@ -1,0 +1,14 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP with stopping score map updates earlier than ACIP itself (null, 0.6, 0.8, 0.95, 0.99).
+# Here, "null" means that the score map updates are not stopped earlier (default behavior).
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /entrypoints/storage@acip: acip_compress_compact
+
+acip:
+  stop_score_map_at_ratio: 0.95
+
+run:
+  id: ${run.type}__${model.identifier}__stop_score_at${acip.stop_score_map_at_ratio}

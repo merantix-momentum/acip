@@ -1,0 +1,31 @@
+# Config to compile all training related sub-configs.
+
+# Top-level training config that is prone to be overridden by the user.
+seed: 42  # global seed, used for Lightning and Huggingface dataset shuffling
+batch_size: 4  # used for train, val, and test dataloaders
+log_every_n_train_steps: 25  # logging frequency of model monitoring while training
+
+torch_float32_matmul_precision: high  # matrix multiplication precision
+
+# BaseDataModule keyword arguments
+data_module:
+  train_batch_size: ${training.batch_size}
+  val_batch_size: ${training.batch_size}
+  num_workers: 0
+
+# Lightning Trainer keyword arguments
+trainer:
+  accelerator: cuda
+  devices: [0]
+  num_nodes: 1
+  precision: bf16-mixed
+  max_steps: 50000  # just a large number, should not be reached due to ACIP's stopping criterion
+  enable_checkpointing: false  # we just save the final model (see entrypoints.storage)
+  log_every_n_steps: 1
+  val_check_interval: 250  # as we may stream from huge data cohorts, explicitly set a validation frequency
+  limit_val_batches: 25
+  num_sanity_val_steps: 0
+
+objective: ???  # populated by objective sub-config
+optimizer_factory: ???  # populated by optimizer sub-config
+callbacks: {}  # populated by acip, benchmarking, and monitoring sub-configs

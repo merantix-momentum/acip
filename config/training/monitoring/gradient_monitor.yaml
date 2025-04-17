@@ -1,0 +1,4 @@
+callbacks:
+  gradient_monitor:
+    _target_: acip.training.monitoring.GradientMonitor
+    log_every_n_train_steps: ${training.log_every_n_train_steps}

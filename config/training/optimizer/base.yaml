@@ -1,0 +1,14 @@
+# Base config for BaseOptimizerFactory
+# Should be overridden by child configs.
+
+optimizer_factory:
+  _target_: acip.training.optimizer.BaseOptimizerFactory
+  optimizer_cls: torch.optim.AdamW
+  normal_params_kwargs:
+  group_params:
+  group_params_kwargs:
+  general_optimizer_kwargs:
+    lr: 5e-5
+    weight_decay: 0.0
+
+scheduler_factory:

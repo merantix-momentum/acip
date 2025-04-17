@@ -1,0 +1,13 @@
+model_factory:
+  _target_: acip.model.model_factory.ACIPModelFactory
+  pretrained_model_cls: acip.core.acip_model.ACIPModel
+  pretrained_model_name_or_path: ${acip.load.model_name_or_path}
+  pretrained_model_config: # left empty because loaded via from_pretrained
+  pretrained_model_kwargs:
+    # Should be disabled if loaded state dict is not complete
+    # (see include_filter and exclude_filter in save_pretrained).
+    with_init_empty_weights: ${acip.load.init_empty_weights}
+  prune_to_ratio: ${acip.prune_to_ratio}
+  compress_and_unparametrize: ${acip.compress_and_unparametrize}
+  measure_ratio_full: ${acip.measure_ratio_full}
+  quantize_weights: ${acip.quantize_weights}
