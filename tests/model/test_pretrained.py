@@ -1,5 +1,4 @@
 import math
-from test.model.utils import deep_compare, forward_compare, model_compare
 
 import torch
 from accelerate import init_on_device
@@ -7,6 +6,7 @@ from transformers import AutoModel
 
 from acip.core.acip_model import ACIPModel, ACIPModelConfig
 from acip.core.parametrized_model import ParametrizedModel, ParametrizedModelConfig
+from tests.model.utils import deep_compare, forward_compare, model_compare
 
 
 def test_acip_model_config_save_and_load(acip_model_config, temp_dir):
