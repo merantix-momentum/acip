@@ -40,7 +40,7 @@ identify==2.6.3
 idna==3.10
 iniconfig==2.1.0
 iopath==0.1.10
-jinja2==3.1.4
+jinja2==3.1.6
 jmespath==1.0.1
 joblib==1.4.2
 jsonlines==4.0.0
