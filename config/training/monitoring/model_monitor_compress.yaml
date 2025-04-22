@@ -1,0 +1,10 @@
+# We evaluate model size over training (cheap) and perplexity during validation (a bit more expensive).
+
+callbacks:
+  model_monitor:
+    _target_: acip.training.monitoring.ModelMonitor
+    train_evaluator: ${eval.evaluator.model_size}
+    val_evaluator: ${eval.evaluator.ppl}
+    log_target_params: true
+    zrange_target_params: [0.0, null]
+    log_every_n_train_steps: ${training.log_every_n_train_steps}

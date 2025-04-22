@@ -1,0 +1,12 @@
+# At fit start and end, we perform a lightweight evaluation of the model.
+
+callbacks:
+  model_benchmarker:
+    _target_: acip.training.benchmarking.ModelBenchmarker
+    evaluator:
+      _target_: acip.eval.evaluator.ComposedModelEvaluator
+      evaluators:
+        model_size: ${eval.evaluator.model_size}
+        ppl: ${eval.evaluator.ppl}
+    test_ratios: ${oc.select:acip.test_ratios, null}  # acip.test_ratios does not exist for fine-tuning, therefore None
+    measure_ratio_full: ${acip.measure_ratio_full}

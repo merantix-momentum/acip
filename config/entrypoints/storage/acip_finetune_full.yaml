@@ -1,0 +1,9 @@
+defaults:
+  - base
+
+load:
+  # Load model from corresponding ACIP run
+  model_name_or_path: ${paths.run_dir}/compress__${model.identifier}/model
+save:
+  # Save the full model. You can set acip.load.init_empty_weights to true (default) without extra computation.
+  path: ${run.path}/model

@@ -1,0 +1,24 @@
+defaults:
+  - base
+
+identifier: wikitext2
+
+# Define a base configuration for Wikitext2DatasetFactory
+_base_dataset_factory: &_base_dataset_factory
+  _target_: acip.data.dataset.Wikitext2DatasetFactory
+  tokenizer_factory: ${model.tokenizer_factory}
+  seed: ${training.seed}
+  shuffle: true
+  tokenizer_encoding_kwargs: # means use default tokenizer encoding args
+
+train_dataset_factory:
+  <<: *_base_dataset_factory
+  split: train
+
+val_dataset_factory:
+  <<: *_base_dataset_factory
+  split: validation
+
+test_dataset_factory:
+  <<: *_base_dataset_factory
+  split: test

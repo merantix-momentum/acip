@@ -1,0 +1,4 @@
+bitsandbytes==0.45.0 ; platform_system == "Linux" and platform_machine == "x86_64" and python_version < "3.13" and python_version >= "3.11"
+peft==0.14.0 ; python_version >= "3.11" and python_version < "3.13"
+torch==2.5.1 ; python_version >= "3.11" and python_version < "3.13"
+transformers==4.46.3 ; python_version >= "3.11" and python_version < "3.13"

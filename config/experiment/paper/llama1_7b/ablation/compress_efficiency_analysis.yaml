@@ -1,0 +1,17 @@
+# @package _global_
+
+# Ablation experiment: Run ACIP without any extra evaluation to estimate net runtime and other efficiency metrics.
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: compress
+  - override /training/monitoring@training: acip_efficiency_monitor
+  - override /training/benchmarking@training: []
+
+training:
+  log_every_n_train_steps: # means no logging
+
+run:
+  id: ${run.type}__${model.identifier}__efficiency_analysis
+  save:
+    - config
+    - results

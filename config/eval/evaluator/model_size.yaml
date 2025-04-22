@@ -1,0 +1,2 @@
+_target_: acip.eval.eval_model_size.SizeModelEvaluator
+eval_parametrized_modules: false  # use only for debugging purposes (can lead to slowdown)

@@ -1,0 +1,8 @@
+_target_: acip.eval.eval_efficiency.EfficiencyModelEvaluator
+tokenizer_factory: ${model.tokenizer_factory}
+eval_model_size: true
+eval_inference: true
+inference_batch_size: 64
+inference_sequence_length: 64
+flops_batch_size: 1
+flops_sequence_length: 512

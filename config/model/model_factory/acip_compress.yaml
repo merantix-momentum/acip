@@ -1,0 +1,17 @@
+defaults:
+  - _self_
+  - acip_config@_here_: default  # compiles ACIPModelConfig
+
+model_factory:
+  _target_: acip.model.model_factory.ACIPModelFactory
+  pretrained_model_cls: acip.core.acip_model.ACIPModel
+  pretrained_model_name_or_path: ${acip.load.model_name_or_path}  # if none, we start from scratch (default behavior)
+  pretrained_model_config: # populated by acip_config
+  pretrained_model_kwargs:
+    # Should be disabled if the loaded state dict is not full
+    # (see include_filter and exclude_filter in save_pretrained).
+    with_init_empty_weights: ${acip.load.init_empty_weights}
+  prune_to_ratio: # makes no sense for a freshly parametrized model
+  compress_and_unparametrize: false  # ignored because prune_to_ratio is None
+  measure_ratio_full: ${acip.measure_ratio_full}
+  quantize_weights: ${acip.quantize_weights}

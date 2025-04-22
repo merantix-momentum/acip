@@ -1,0 +1,10 @@
+# @package _global_
+
+defaults:
+  - override /model/base@model: llama31_8b
+
+acip:
+  prune_to_ratio: 0.5
+
+run:
+  series: paper

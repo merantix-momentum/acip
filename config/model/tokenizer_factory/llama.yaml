@@ -1,0 +1,6 @@
+# Custom factory because we cannot use AutoTokenizerFactory for older LLaMA models.
+tokenizer_factory:
+  _target_: acip.model.tokenizer_factory.LlamaTokenizerFactory
+  model_name_or_path: ${model.base_model_name_or_path}
+  tokenizer_kwargs:
+    padding_side: left

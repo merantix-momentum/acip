@@ -1,0 +1,8 @@
+# ACIP using singular values as score map. This requires no tuning at all.
+
+callbacks:
+  score_map_updater:
+    _target_: acip.training.acip.SVScoreMapUpdater
+
+trainer:
+  max_steps: 0  # no optimization

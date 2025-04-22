@@ -1,0 +1,14 @@
+# Base config for save and load behavior of an ACIP model.
+# Is injected into acip sub-configs.
+
+load:
+  model_name_or_path:
+  # Whether to create the parametrized modules with empty weights (much faster) or not.
+  # This only affects model loading, not creating the model from scratch.
+  # See acip.core.parametrized_model.ParametrizedModel.from_pretrained.
+  init_empty_weights: true
+save:
+  path:
+  include_filter:
+  exclude_filter:
+  kwargs: {}

@@ -1,0 +1,11 @@
+# @package _global_
+
+# Disable any output to files (does not affect stdout/stderr)
+
+defaults:
+  - override /hydra: no_output
+
+wandb:
+
+run:
+  save: []

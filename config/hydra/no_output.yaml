@@ -1,0 +1,35 @@
+defaults:
+  - override hydra_logging: colorlog
+  - override job_logging: stdout  # to prevent log file creation
+
+# Prevent hydra from creating an output directory.
+output_subdir:
+run:
+  dir: .
+sweep:
+  dir: .
+
+# Tell hydra to put the logger for our code to DEBUG ("acip" serves as prefix).
+verbose: [__main__, hydra, acip]
+# job_logging default "stdout" requires us to reconfigure the colorlog formatter manually.
+job_logging:
+  formatters:
+    simple:
+      format: '[%(asctime)s][%(name)s][%(levelname)s] - %(message)s'
+    colorlog:
+      (): colorlog.ColoredFormatter
+      format: '[%(cyan)s%(asctime)s%(reset)s][%(blue)s%(name)s%(reset)s][%(log_color)s%(levelname)s%(reset)s] - %(message)s'
+      log_colors:
+        DEBUG: purple
+        INFO: green
+        WARNING: yellow
+        ERROR: red
+        CRITICAL: red
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: colorlog
+      stream: ext://sys.stdout
+
+job:
+  name: ${run.id}

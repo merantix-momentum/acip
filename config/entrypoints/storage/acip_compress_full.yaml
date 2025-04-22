@@ -1,0 +1,6 @@
+defaults:
+  - base
+
+save:
+  # Save the full model. You can set acip.load.init_empty_weights to true (default) without extra computation.
+  path: ${run.path}/model

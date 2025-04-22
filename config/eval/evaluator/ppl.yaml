@@ -1,0 +1,6 @@
+_target_: acip.eval.eval_ppl.PPLModelEvaluator
+tokenizer_factory: ${model.tokenizer_factory}
+dataset_names:
+  - c4
+  - wikitext
+ctx_length: ${model.ctx_length}  # use None if the max model context length should be used

@@ -1,0 +1,8 @@
+# Base config for Huggingface datasets created by acip.data.dataset.DatasetFactory.
+# Fields must be populated by child configs.
+
+identifier: ???  # used as part of the run id
+
+train_dataset_factory: ???
+val_dataset_factory: ???
+test_dataset_factory: ???

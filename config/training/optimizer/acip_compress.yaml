@@ -1,0 +1,18 @@
+defaults:
+  - base
+
+optimizer_factory:
+  group_params:
+    # Compatible with SVDParametrization.
+    target_params:
+      - mask
+    # Compatible with LoRA AdapterConfig.
+    tuning_params:
+      - lora_A.default.weight
+      - lora_B.default.weight
+      - lora_A.default.bias
+      - lora_B.default.bias
+  general_optimizer_kwargs:
+    lr: ${acip.lr}
+    weight_decay: 0.0
+  reset_tunable_params: true  # make sure that no other parameters than above are tuned

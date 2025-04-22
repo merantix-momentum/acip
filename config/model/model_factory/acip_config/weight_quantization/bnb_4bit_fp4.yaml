@@ -1,0 +1,13 @@
+model_factory:
+  pretrained_model_config:
+    weight_quantization_config:
+      _target_: acip.core.parametrized_model.WeightQuantizationConfig
+      module_factory_cls: bnb4bit
+      module_factory_kwargs:
+        compute_dtype: torch.bfloat16
+        quant_type: fp4
+      # Only quantize weights of ortho, base, and base_layer (in case a parametrized module was unparametrized)
+      target_modules:
+        - ortho
+        - base
+        - base_layer

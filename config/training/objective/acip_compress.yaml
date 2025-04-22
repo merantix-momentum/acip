@@ -1,0 +1,12 @@
+objective:
+  _target_: acip.training.objective.CombinedLoss
+  loss_objectives:
+    task_objective:
+      _target_: acip.training.objective.TaskLoss
+    reg_objective:
+      _target_: acip.training.objective.LpRegularizationLoss
+      reg_lp_norm: 1.0
+      reg_precision: float32  # use high precision to avoid numerical instabilities due to large rounding errors
+  loss_weights:
+    task_objective: 1.0
+    reg_objective: ${acip.reg_scheduler_start_weight}  # controlled by ACIPScheduler at runtime

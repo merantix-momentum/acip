@@ -1,0 +1,5 @@
+defaults:
+  - qwen25_7b
+
+identifier: qwen25_3b
+base_model_name_or_path: Qwen/Qwen2.5-3B

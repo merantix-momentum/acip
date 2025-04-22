@@ -1,0 +1,3 @@
+# A regularization loss is not required for fine-tuning because all target parameters are frozen.
+objective:
+  _target_: acip.training.objective.TaskLoss

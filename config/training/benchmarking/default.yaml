@@ -1,0 +1,16 @@
+# At fit start and end, we perform an extensive evaluation of the model.
+# Here, LM Eval is by far the most expensive part.
+
+callbacks:
+  model_benchmarker:
+    _target_: acip.training.benchmarking.ModelBenchmarker
+    evaluator:
+      _target_: acip.eval.evaluator.ComposedModelEvaluator
+      evaluators:
+        model_size: ${eval.evaluator.model_size}
+        ppl: ${eval.evaluator.ppl}
+        lm_eval: ${eval.evaluator.lm_eval}
+        efficiency: ${eval.evaluator.efficiency}
+        generation: ${eval.evaluator.generation}
+    test_ratios: ${oc.select:acip.test_ratios, null}  # acip.test_ratios does not exist for fine-tuning, therefore None
+    measure_ratio_full: ${acip.measure_ratio_full}

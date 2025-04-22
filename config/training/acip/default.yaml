@@ -1,0 +1,16 @@
+# Scheduler and updater for standard ACIP tuning.
+# All important tweaks are controlled by the acip sub-config of the entrypoint.
+
+callbacks:
+  acip_scheduler:
+    _target_: acip.training.acip.ACIPScheduler
+    acip_stop_ratio: ${acip.stop_ratio}
+    measure_ratio_full: ${acip.measure_ratio_full}
+    post_tune_steps: ${acip.post_tune_steps}
+    reg_scheduler_start_weight: ${acip.reg_scheduler_start_weight}
+    reg_scheduler_update_every: ${acip.reg_scheduler_update_every}
+    reg_scheduler_update_factor: ${acip.reg_scheduler_update_factor}
+  score_map_updater:
+    _target_: acip.training.acip.MaskScoreMapUpdater
+    stop_update_at_ratio: ${acip.stop_score_map_at_ratio}
+    log_every_n_train_steps: ${training.log_every_n_train_steps}

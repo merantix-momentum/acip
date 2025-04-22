@@ -1,0 +1,9 @@
+model_factory:
+  pretrained_model_config:
+    base_model_config:
+      _target_: acip.core.parametrized_model.BaseModelConfig
+      pretrained_model_cls: transformers.AutoModelForCausalLM
+      pretrained_model_kwargs:
+        pretrained_model_name_or_path: ${model.base_model_name_or_path}
+        torch_dtype: bfloat16
+      pretrained_config:

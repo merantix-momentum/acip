@@ -1,0 +1,5 @@
+_target_: acip.eval.eval_generation.GenerationModelEvaluator
+tokenizer_factory: ${model.tokenizer_factory}
+generation_prompts:
+  - How to compress Large Language Models?
+  - What is the concept of time?

@@ -1,0 +1,63 @@
+# @package _global_
+
+# Config of ACIP finetune entrypoint (see acip.entrypoints.acip_finetune).
+
+defaults:
+  # Load ACIPEntrypointConf and base config.
+  - /acip/ACIPEntrypointConf@_here_
+  - base
+  # Data-related configs.
+  - /data: c4
+  # Evaluation-related configs.
+  - /eval: default
+  # Model-related configs.
+  - /model/model_factory@model: acip_finetune
+  - /model/tokenizer_factory@model: default
+  - /model/base@model: default  # it's important that base comes after tokenizer_factory because it may overwrite it
+  # Training-related configs.
+  - /training: base
+  - /training/objective@training: acip_finetune
+  - /training/optimizer@training: acip_finetune
+  - /training/monitoring@training:
+      - gradient_monitor
+      - model_monitor_finetune
+  - /training/benchmarking@training:
+      - default
+  # Save and load behavior of the ACIP model.
+  - storage@acip: acip_finetune_compact
+  - _self_
+  # Experiment and options configs, overwriting parts of this entrypoint.
+  - /experiment:
+  - /options:
+
+run:
+  id: ${run.type}__${model.identifier}__ratio${acip.prune_to_ratio}  # add a suffix in ablation experiments
+  group: ${data.identifier}__${model.identifier}__${run.series}  # group by dataset & model
+  type: finetune
+  tags_default:
+    - type:${run.type}
+    - series:${run.series}
+    - model:${model.identifier}
+    - data:${data.identifier}
+  save:
+    - config
+    - results
+    - model
+
+data:
+  train_dataset_factory:
+    # Making sure that not the same train data seed is used for compress and finetune.
+    seed: 41
+
+training:
+  trainer:
+    max_steps: ${acip.finetune_steps}
+
+# Define ACIP-finetune-specific config.
+acip:
+  quantize_weights: false  # optionally quantize U and V weights of SVD parametrization
+  prune_to_ratio: 0.4  # target compression ratio at which the model is materialized before finetuning
+  measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
+  compress_and_unparametrize: true  # whether to actually compress the model (cannot be reverted)
+  finetune_steps: 25000
+  lr: 2e-4

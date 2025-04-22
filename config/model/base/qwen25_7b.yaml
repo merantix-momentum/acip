@@ -1,0 +1,3 @@
+identifier: qwen25_7b
+base_model_name_or_path: Qwen/Qwen2.5-7B
+ctx_length: 4096

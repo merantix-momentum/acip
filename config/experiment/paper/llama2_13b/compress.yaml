@@ -1,0 +1,21 @@
+# @package _global_
+
+defaults:
+  - override /model/base@model: llama2_13b
+
+training:
+  batch_size: 2
+  trainer:
+    accumulate_grad_batches: 2
+  optimizer_factory:
+    group_params:
+      target_params:
+        - gate_proj.base_layer.parametrization.mask
+        - down_proj.base_layer.parametrization.mask
+        - k_proj.base_layer.parametrization.mask
+        - v_proj.base_layer.parametrization.mask
+        - o_proj.base_layer.parametrization.mask
+        - q_proj.base_layer.parametrization.mask
+
+run:
+  series: paper

@@ -1,0 +1,17 @@
+# Config to compile an ACIPModelConfig.
+
+defaults:
+  - _self_
+  - base_model@_here_: default  # compiles BaseModelConfig
+  - parametrization@_here_: svd  # compiles ParametrizationConfig
+  - adapter@_here_: lora  # compiles AdapterConfig
+  - weight_quantization@_here_: bnb_4bit_fp4  # compiles WeightQuantizationConfig
+
+model_factory:
+  pretrained_model_config:
+    _target_: acip.core.acip_model.ACIPModelConfig
+    base_model_config: # populated by base_model
+    parametrization_config: # populated by parametrization
+    adapter_config: # populated by adapter
+    weight_quantization_config: # populated by weight_quantization
+    model_mode: train

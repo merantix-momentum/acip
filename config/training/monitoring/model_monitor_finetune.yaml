@@ -1,0 +1,7 @@
+# We only evaluate perplexity during validation.
+
+callbacks:
+  model_monitor:
+    _target_: acip.training.monitoring.ModelMonitor
+    val_evaluator: ${eval.evaluator.ppl}
+    log_every_n_train_steps:
