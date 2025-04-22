@@ -19,14 +19,14 @@ library_name: transformers
 <div align="center">
     <a href="https://github.com/merantix-momentum/acip"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white.svg" alt="github" style="display: inline-block; vertical-align: middle;"></a>
     <a href="https://arxiv.org/abs/2502.01717"><img src="https://img.shields.io/badge/arXiv-2502.01717-b31b1b.svg" alt="arxiv" style="display: inline-block; vertical-align: middle;"></a>
-    <a href="https://merantix-momentum.com/acip"><img alt="website" src="https://img.shields.io/website/https/acip.merantix-momentum.cloud.svg?down_color=red&down_message=offline&up_message=online" style="display: inline-block; vertical-align: middle;"></a>
+    <a href="https://acip.merantix-momentum.com/"><img alt="website" src="https://img.shields.io/website/https/acip.merantix-momentum.com.svg?down_color=red&down_message=offline&up_message=online" style="display: inline-block; vertical-align: middle;"></a>
 </div>
 
 <h2 align="center">
     <p> [
         <a href="https://github.com/merantix-momentum/acip">🤖 GitHub</a> |
         <a href="https://arxiv.org/abs/2502.01717">📄 Paper</a> |
-        <a href="https://merantix-momentum.com/acip">🌐 Website</a>
+        <a href="https://acip.merantix-momentum.com/">🌐 Website</a>
         ]
     </p>
 </h2>

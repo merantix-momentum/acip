@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://arxiv.org/abs/2502.01717"><img src="https://img.shields.io/badge/arXiv-2502.01717-b31b1b.svg" alt="arxiv"></a>
-    <a href="https://merantix-momentum.com/acip"><img alt="website" src="https://img.shields.io/website/https/merantix-momentum.com/acip.svg?down_color=red&down_message=offline&up_message=online"></a>
+    <a href="https://acip.merantix-momentum.com/"><img alt="website" src="https://img.shields.io/website/https/acip.merantix-momentum.com.svg?down_color=red&down_message=offline&up_message=online"></a>
     <a href="https://huggingface.co/collections/MerantixMomentum/acip-67fe8f7b9f3132468a117ea6"><img alt="models" src="https://img.shields.io/badge/Hugging%20Face-FFD21E?logo=huggingface&logoColor=000.svg"></a>
     <a href="https://huggingface.co/meta-llama"><img alt="llama" src="https://img.shields.io/badge/LLaMA 1,2,3-pink"></a>
     <a href="https://huggingface.co/mistralai/Mistral-7B-v0.3"><img alt="llama" src="https://img.shields.io/badge/Mistral v0.3-pink"></a>
@@ -15,7 +15,7 @@
 <h4 align="center">
     <p> [
         <a href="https://arxiv.org/abs/2502.01717">📄 Paper</a> |
-        <a href="https://merantix-momentum.com/acip">🌐 Website</a> |
+        <a href="https://acip.merantix-momentum.com/">🌐 Website</a> |
         <a href="https://huggingface.co/collections/MerantixMomentum/acip-67fe8f7b9f3132468a117ea6">🤗 Models</a>
         ]
     </p>
@@ -32,7 +32,7 @@ from transformers import AutoModel
 model = AutoModel.from_pretrained("MerantixMomentum/ACIP-llama2-7b", trust_remote_code=True)
 model.prune_model_by_score(compression_ratio=0.5).compress()
 ```
-See our [project website](https://merantix-momentum.com/acip) for a quick overview of the ACIP algorithm or dive into the full details with our paper
+See our [project website](https://acip.merantix-momentum.com/) for a quick overview of the ACIP algorithm or dive into the full details with our paper
 
 > [**Choose Your Model Size: Any Compression by a Single Gradient Descent**](https://arxiv.org/abs/2502.01717) </br>
 *Martin Genzel\*, Patrick Putzky\*, Pengfei Zhao\*, Sebastian Schulze, Mattes Mollenhauer, Robert Seidel, Stefan Dietzel, Thomas Wollmann* (* equal contribution) <br>
