@@ -383,7 +383,7 @@ Our training logic is based on [PyTorch Lightning](https://lightning.ai/docs/pyt
 
 Feel free to reach out to us via GH issues or email! <br>
 `martin.genzel at merantix-momentum dot com` <br>
-`patrick putzky at merantix-momentum dot com`
+`patrick.putzky at merantix-momentum dot com`
 
 # License
 
