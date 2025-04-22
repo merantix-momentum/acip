@@ -20,7 +20,6 @@ library_name: transformers
     <a href="https://github.com/merantix-momentum/acip"><img src="https://img.shields.io/badge/GitHub-%23121011.svg?logo=github&logoColor=white.svg" alt="github" style="display: inline-block; vertical-align: middle;"></a>
     <a href="https://arxiv.org/abs/2502.01717"><img src="https://img.shields.io/badge/arXiv-2502.01717-b31b1b.svg" alt="arxiv" style="display: inline-block; vertical-align: middle;"></a>
     <a href="https://merantix-momentum.com/acip"><img alt="website" src="https://img.shields.io/website/https/acip.merantix-momentum.cloud.svg?down_color=red&down_message=offline&up_message=online" style="display: inline-block; vertical-align: middle;"></a>
-    <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache%202.0-blue" style="display: inline-block; vertical-align: middle;"></a>
 </div>
 
 <h2 align="center">
