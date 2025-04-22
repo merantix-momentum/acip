@@ -128,7 +128,7 @@ termcolor==2.5.0
 threadpoolctl==3.5.0
 tokenizers==0.20.3
 tomli==2.2.1 ; python_full_version <= '3.11'
-torch==2.5.1
+torch==2.6.0
 torchaudio==2.5.1
 torchmetrics==1.6.0
 torchvision==0.20.1
