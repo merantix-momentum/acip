@@ -45,10 +45,10 @@ from transformers import AutoModel
 
 model = AutoModel.from_pretrained("{{REPO_ID}}", trust_remote_code=True)
 ```
-This will download and create a fully parameterized ACIP model that can be pruned to any compression ratio you wish.
+This will download and create a fully parameterized ACIP model that can be pruned to any compression rate you wish.
 For example,
 ```python
-model.prune_model_by_score(compression_ratio=0.4)
+model.prune_model_by_score(size_ratio=0.4)
 ```
 will prune `model` to 40% if its original size measured in number of parameters, i.e., 60% compression rate.
 A unique feature of ACIP is that this operation is revertible in the sense that you can rerun `model.prune_model_by_score` as often as you like to evaluate your model at different sizes. Finally, you can "commit" to a certain ratio and run
@@ -65,7 +65,7 @@ to save even more memory (we have only tested 4bit quantization with `bitsandbyt
 
 **🚀 That's it! You can now use your compressed model for inference or fine-tuning as any other Causal Language Model from 🤗 transformers.**
 
-**Note**: The parameter `compression_ratio` ranges from 1.0 to 0.0, indicating the model size after compression. For example, 0.4 means that the model has only 40% of the original number of parameters and 1.0 means no compression at all.
+**Note**: The parameter `size_ratio` ranges from 1.0 to 0.0, indicating the model size after compression. For example, 0.4 means that the model has only 40% of the original number of parameters and 1.0 means no compression at all. Alternatively, you can also set `compression_rate` in `prune_model_by_score`, which is equivalent to `size_ratio = 1.0 - compression_rate`.
 
 # Dependencies
 

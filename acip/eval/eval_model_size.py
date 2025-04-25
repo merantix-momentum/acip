@@ -19,9 +19,9 @@ class SizeModelEvaluator(ModelEvaluator):
      - size/num_params_compressed: Number of parameters of the compressed model, where only the number of parameters in
        parametrized modules are counted
      - size/num_params_compressed_full: Number of parameters of the compressed model
-     - size/compression_ratio: Compression ratio of the compressed model, where only the number of parameters in
+     - size/size_ratio: Size ratio of the compressed model, where only the number of parameters in
        parametrized modules are counted
-     - size/compression_ratio_full: Compression ratio of the compressed model
+     - size/size_ratio_full: Size ratio of the compressed model
      - size/parametrized_modules/<keys>: Optional keys to get information about individual parametrized modules,
        see `get_parametrized_modules_info` for details
     """
@@ -47,8 +47,8 @@ class SizeModelEvaluator(ModelEvaluator):
             results[prefix + "num_params_full"] = model.get_num_params(full=True)
             results[prefix + "num_params_compressed"] = model.get_num_params(compressed=True)
             results[prefix + "num_params_compressed_full"] = model.get_num_params(compressed=True, full=True)
-            results[prefix + "compression_ratio"] = model.get_compression_ratio()
-            results[prefix + "compression_ratio_full"] = model.get_compression_ratio(full=True)
+            results[prefix + "size_ratio"] = model.get_size_ratio()
+            results[prefix + "size_ratio_full"] = model.get_size_ratio(full=True)
 
             if self.eval_parametrized_modules:
                 parametrized_modules_info = get_parametrized_modules_info(model=model)
@@ -65,12 +65,12 @@ def get_parametrized_modules_info(model: ParametrizedModel, lp_norm: float = 1.0
     where <info> is one of the following:
      - "sparsity" (of the parameter)
      - "numel" (of the parameter)
-     - "compression_ratio" (of the parameter)
+     - "size_ratio" (of the parameter)
      - "lp_norm" (of the parameter, with the given `lp_norm` >= 1.0)
     Moreover, the returned dictionary also collects global information about the parametrized modules:
      - [<module_name>]["num_params"] (number of parameters of the unparametrized module)
      - [<module_name>]["num_params_compressed"] (number of parameters of the compressed module)
-     - [<module_name>]["compression_ratio"] (achievable compression ratio of the module)
+     - [<module_name>]["size_ratio"] (achievable size ratio of the module)
     """
     info = defaultdict(dict)
     with torch.no_grad():
@@ -78,11 +78,11 @@ def get_parametrized_modules_info(model: ParametrizedModel, lp_norm: float = 1.0
             for p_name, param in module.parametrization.get_target_params().items():
                 info[m_name][f"{p_name}.sparsity"] = mask_sparsity(param)
                 info[m_name][f"{p_name}.numel"] = param.numel()
-                info[m_name][f"{p_name}.compression_ratio"] = (
+                info[m_name][f"{p_name}.size_ratio"] = (
                     info[m_name][f"{p_name}.sparsity"] / info[m_name][f"{p_name}.numel"]
                 )
                 info[m_name][f"{p_name}.lp_norm"] = torch.norm(param.float(), p=lp_norm).item()
             info[m_name]["num_params"] = module.parametrization.get_num_params()
             info[m_name]["num_params_compressed"] = module.parametrization.get_num_params(compressed=True)
-            info[m_name]["compression_ratio"] = info[m_name]["num_params_compressed"] / info[m_name]["num_params"]
+            info[m_name]["size_ratio"] = info[m_name]["num_params_compressed"] / info[m_name]["num_params"]
     return info

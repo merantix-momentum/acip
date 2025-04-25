@@ -1,6 +1,6 @@
 # @package _global_
 
-# Ablation experiment: Run ACIP for different stopping criteria, i.e., at which compression ratio to stop
+# Ablation experiment: Run ACIP for different stopping criteria, i.e., at which size ratio to stop
 # (0.2, 0.3, 0.4, 0.6, 0.8, 0.95).
 
 defaults:

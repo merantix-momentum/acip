@@ -19,13 +19,13 @@ from acip.training.utils import generate_params_plot, stop_train
 logger = getLogger(__name__)
 
 
-def compression_ratio_reached(pl_module: BaseLitModule, compression_ratio: float, full: bool = False) -> bool:
+def size_ratio_reached(pl_module: BaseLitModule, size_ratio: float, full: bool = False) -> bool:
     """
-    Helper function to check if a given model has reached a compression ratio.
+    Helper function to check if a given model has reached a size ratio.
     Serves as standard stopping criterion for ACIP.
     """
     assert isinstance(pl_module.model, ParametrizedModel)
-    return compression_ratio >= pl_module.model.get_compression_ratio(full=full)
+    return size_ratio >= pl_module.model.get_size_ratio(full=full)
 
 
 class ACIPScheduler(pl.Callback):
@@ -47,10 +47,10 @@ class ACIPScheduler(pl.Callback):
     ):
         """
         Args:
-            acip_stop_ratio: Compression ratio at which to stop ACIP.
+            acip_stop_ratio: Size ratio at which to stop ACIP.
             measure_ratio_full: If `True`, all parameters of the model are counted when computing
                 the stopping criterion, if `False` only the parameters of the parametrized modules
-                are counted (default). See `full` flag in `ParametrizedModel.get_compression_ratio`.
+                are counted (default). See `full` flag in `ParametrizedModel.get_size_ratio`.
             post_tune_steps: Optional number of tuning steps to run after the ACIP stopping criterion is reached.
                 This will continue optimizing the "tuning_params" defined in the optimizer with respect to the
                 task objective. None means post-tuning is disabled.
@@ -90,7 +90,7 @@ class ACIPScheduler(pl.Callback):
             self._update_reg_weight(pl_module)
 
             # If stopping criterion is reached, transition to the post-tuning phase or stop training directly.
-            if compression_ratio_reached(pl_module, self.acip_stop_ratio, full=self.measure_ratio_full):
+            if size_ratio_reached(pl_module, self.acip_stop_ratio, full=self.measure_ratio_full):
                 if self.post_tune_steps is None:
                     stop_train(trainer)
                 else:
@@ -143,7 +143,7 @@ class MaskScoreMapUpdater(ScoreMapUpdater):
     def __init__(self, stop_update_at_ratio: float | None = None, log_every_n_train_steps: int | None = 25):
         """
         Args:
-            stop_update_at_ratio: Optional compression ratio at which to stop updating the score map (earlier than ACIP). None or 0.0 mean
+            stop_update_at_ratio: Optional size ratio at which to stop updating the score map (earlier than ACIP). None or 0.0 mean
                 that the score map is updated until the stopping criterion of ACIP is reached (default).
             log_every_n_train_steps: Frequency at which the score map is logged as heatmap to Weights & Biases.
                 Use None to disable.
@@ -168,7 +168,7 @@ class MaskScoreMapUpdater(ScoreMapUpdater):
         if (
             self.stop_update_at_ratio is not None
             and self.stop_update_at_ratio > 0.0
-            and compression_ratio_reached(pl_module, self.stop_update_at_ratio)
+            and size_ratio_reached(pl_module, self.stop_update_at_ratio)
         ):
             return
 

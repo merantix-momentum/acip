@@ -1,4 +1,4 @@
 callbacks:
   acip_efficiency_monitor:
     _target_: acip.training.monitoring.ACIPEfficiencyMonitor
-    min_compression_ratio: ${oc.select:acip.stop_ratio, 0.4}
+    min_size_ratio: ${oc.select:acip.stop_ratio, 0.4}
