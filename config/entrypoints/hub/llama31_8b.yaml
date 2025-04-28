@@ -1,0 +1,14 @@
+defaults:
+  - default
+
+hub:
+  license: llama3.1
+  language:
+    - en
+    - de
+    - fr
+    - it
+    - pt
+    - hi
+    - es
+    - th

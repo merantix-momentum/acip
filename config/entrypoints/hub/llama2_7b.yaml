@@ -1,0 +1,5 @@
+defaults:
+  - default
+
+hub:
+  license: llama2

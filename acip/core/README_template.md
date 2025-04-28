@@ -1,12 +1,9 @@
 ---
 license: {{LICENSE}}
-datasets:
-- allenai/c4
-language:
-- en
-metrics:
-- perplexity
-- accuracy
+datasets: {{DATASETS}}
+language: {{LANGUAGE}}
+metrics: {{METRICS}}
+tags: {{TAGS}}
 base_model:
 - {{BASE_MODEL}}
 pipeline_tag: text-generation

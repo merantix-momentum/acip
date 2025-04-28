@@ -13,6 +13,8 @@ defaults:
   - /model/base@model: default  # it's important that base comes after tokenizer_factory because it may overwrite it
   # Load behavior of the ACIP model.
   - storage@acip: acip_push_to_hub
+  # Hub-related config.
+  - hub@acip: default
 
 paths:
   # Add the current run series to the parent run directory.
@@ -33,10 +35,3 @@ acip:
   prune_to_ratio:
   measure_ratio_full: false
   compress_and_unparametrize: false
-  # Hub-specific config.
-  hub:
-    push_model: true  # otherwise, only accompanying files are pushed
-    # Required for README rendering.
-    repo_id: MerantixMomentum/acip_${model.identifier}
-    license: apache-2.0
-    license_text: This model is released under the ${acip.hub.license} license.

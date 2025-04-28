@@ -1,0 +1,6 @@
+defaults:
+  - default
+
+hub:
+  license: other
+  license_text: The license is inherited from the base model ${model.base_model_name_or_path}.

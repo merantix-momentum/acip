@@ -1,0 +1,18 @@
+defaults:
+  - default
+
+hub:
+  language:
+    - zho
+    - eng
+    - fra
+    - spa
+    - por
+    - deu
+    - ita
+    - rus
+    - jpn
+    - kor
+    - vie
+    - tha
+    - ara
