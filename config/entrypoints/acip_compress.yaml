@@ -49,7 +49,7 @@ run:
 acip:
   cache_init_model: false
   quantize_weights: false  # optionally quantize U and V weights of SVD parametrization
-  stop_ratio: 0.4  # compression ratio at which to stop ACIP (subsequent compression should not be lower)
+  stop_ratio: 0.4  # size ratio at which to stop ACIP (subsequent compression should not be lower)
   stop_score_map_at_ratio: # means that the score map update continues until the stopping criterion reached
   measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
   post_tune_steps: 1000  # how many steps to continue optimizing adapters after ACIP stopped
@@ -58,5 +58,5 @@ acip:
   reg_scheduler_update_every: 4
   reg_scheduler_update_factor: 1.01
   lr: 5e-5
-  # Compression ratios at which to evaluate the final model. None means the ACIP model is evaluated at it is.
+  # Size ratios at which to evaluate the final model. None means the ACIP model is evaluated at it is.
   test_ratios: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]

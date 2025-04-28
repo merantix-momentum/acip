@@ -32,7 +32,7 @@ class ModelBenchmarker(pl.Callback):
         Args:
             evaluator: `ModelEvaluator` instance to use for benchmarking.
             test_ratios: If a list of floats between 0 and 1 is provided, the model will be pruned to each of these
-                compression ratios (via `ACIPModel.prune_model_by_score`) and evaluated.
+                size ratios (via `ACIPModel.prune_model_by_score`) and evaluated.
                 If `None`, the model will be evaluated at the end of training as it is.
             measure_ratio_full: If `True`, all parameters of the model are counted when pruning to a target ratio
                 is performed, if `False` only the parameters of the parametrized modules are counted (default).
@@ -63,13 +63,13 @@ class ModelBenchmarker(pl.Callback):
         if self.test_ratios is not None:
             # This only works for `ACIPModel`s
             assert isinstance(pl_module.model, ACIPModel)
-            # Benchmark model at each compression ratio
+            # Benchmark model at each size ratio
             for ratio in self.test_ratios:
-                logger.info(f"Benchmarking model at compression ratio {ratio}.")
-                pl_module.model.prune_model_by_score(compression_ratio=ratio, full=self.measure_ratio_full)
+                logger.info(f"Benchmarking model at size ratio {ratio}.")
+                pl_module.model.prune_model_by_score(size_ratio=ratio, full=self.measure_ratio_full)
                 self.results[f"at_end_ratio{ratio}"] = self.evaluator(model=pl_module.model)
-                # Add target compression ratio to results for better identification
-                self.results[f"at_end_ratio{ratio}"]["target_compression_ratio"] = ratio
+                # Add target size ratio to results for better identification
+                self.results[f"at_end_ratio{ratio}"]["target_size_ratio"] = ratio
 
                 if wandb.run is not None:
                     fig = generate_params_plot(pl_module.model.get_target_params(), zmin=None, zmax=None)

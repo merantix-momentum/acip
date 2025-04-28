@@ -130,13 +130,13 @@ class ACIPEfficiencyMonitor(pl.Callback):
      - peak_memory_reserved: The peak memory reserved by the model in GB.
     """
 
-    def __init__(self, min_compression_ratio: float = 0.4):
+    def __init__(self, min_size_ratio: float = 0.4):
         """
         Args:
-            min_compression_ratio: Minimum compression ratio that pruning will be tested with.
+            min_size_ratio: Minimum size ratio that pruning will be tested with.
         """
         super().__init__()
-        self.min_compression_ratio = min_compression_ratio
+        self.min_size_ratio = min_size_ratio
 
         # Stores the monitored results
         self.results: dict[str, Any] = {}
@@ -166,12 +166,12 @@ class ACIPEfficiencyMonitor(pl.Callback):
         self.results["pruning_time"] = time.time()
         num_tests = 20
         for _ in tqdm(range(num_tests), desc="Measuring pruning time"):
-            compression_ratio = np.random.uniform(self.min_compression_ratio, 1.0)
-            pl_module.model.prune_model_by_score(compression_ratio=compression_ratio)
+            size_ratio = np.random.uniform(self.min_size_ratio, 1.0)
+            pl_module.model.prune_model_by_score(size_ratio=size_ratio)
         self.results["pruning_time"] = (time.time() - self.results["pruning_time"]) / num_tests
 
         # Measure time of actual compression
-        pl_module.model.prune_model_by_score(compression_ratio=self.min_compression_ratio)
+        pl_module.model.prune_model_by_score(size_ratio=self.min_size_ratio)
         self.results["compress_time"] = time.time()
         pl_module.model.compress()
         self.results["compress_time"] = time.time() - self.results["compress_time"]

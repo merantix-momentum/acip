@@ -1,0 +1,18 @@
+# HuggingFace Hub-specific config used for in acip_push_to_hub entrypoint.
+
+hub:
+  push_model: true  # otherwise, only accompanying files are pushed
+  # Metadata for model card rendering (README).
+  repo_id: MerantixMomentum/acip_${model.identifier}
+  license: apache-2.0
+  license_text: This model is released under the ${acip.hub.license} license.
+  metrics:
+    - perplexity
+    - accuracy
+  language:
+    - en
+  datasets:
+    - allenai/c4
+  tags:
+    - acip
+    - pytorch

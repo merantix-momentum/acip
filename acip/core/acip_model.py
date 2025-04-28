@@ -1,9 +1,12 @@
+import logging
 from typing import Any
 
 import torch
 from transformers import PreTrainedModel
 
 from .parametrized_model import ParametrizedModel, ParametrizedModelConfig
+
+logger = logging.getLogger(__name__)
 
 
 class ACIPModelConfig(ParametrizedModelConfig):
@@ -24,7 +27,7 @@ class ACIPModel(ParametrizedModel):
     It manages a `score_map` that stores the scores of the parametrized modules' target parameters,
     which are updated during tuning by the ACIP method.
     Moreover, it provides `prune_model_by_score` that prunes the target parameters of the model according to
-    their scores to achieve any given compression ratio.
+    their scores to achieve any given size ratio.
 
     Notes: The `score_map` is managed in float32 internally because a lower precision may lead to unexpected numerical
         inaccuracies in the resulting parameter ranking. Fortunately, the memory consumption is negligible compared to
@@ -92,10 +95,10 @@ class ACIPModel(ParametrizedModel):
             buffer.copy_(score.detach().float())
             self._score_map[p_name] = buffer
 
-    def _predict_compression_ratio_by_score(self, k: int, full: bool = False) -> tuple[float, dict[str, torch.Tensor]]:
+    def _predict_size_ratio_by_score(self, k: int, full: bool = False) -> tuple[float, dict[str, torch.Tensor]]:
         """
         Helper function that checks what would happen if the k smallest target parameters are pruned
-        according to the global score map ranking. It returns the resulting compression ratio
+        according to the global score map ranking. It returns the resulting size ratio
         and the corresponding parameter masks.
 
         Args:
@@ -103,7 +106,7 @@ class ACIPModel(ParametrizedModel):
             full: Whether to count the number of parameters of the entire model or only the parametrized modules.
                 See also `ParametrizedModel.get_num_params`.
 
-        Returns: Tuple of compression ratio and parameter masks. The masks indicate which parameters to keep.
+        Returns: Tuple of size ratio and parameter masks. The masks indicate which parameters to keep.
         """
         # Find the threshold value for the k smallest entries according to the global score map ranking.
         score_map_cat = torch.cat([param.flatten() for param in self.score_map.values()])
@@ -114,55 +117,72 @@ class ACIPModel(ParametrizedModel):
         for p_name, score in self.score_map.items():
             param_masks[p_name] = (score > threshold).to(dtype=score.dtype)
 
-        # Compute hypothetical compression ratio if param_masks would be used as masks for the target parameters.
-        compression_ratio = self.get_compression_ratio(full=full, target_params=param_masks)
-        return compression_ratio, param_masks
+        # Compute hypothetical size ratio if param_masks would be used as masks for the target parameters.
+        size_ratio = self.get_size_ratio(full=full, target_params=param_masks)
+        return size_ratio, param_masks
 
-    def _get_param_masks(self, compression_ratio: float, full: bool = False) -> dict[str, torch.Tensor]:
+    def _get_param_masks(self, size_ratio: float, full: bool = False) -> dict[str, torch.Tensor]:
         """
-        Helper function that determines which parameters to keep to reach a target compression ratio.
-        Instead of looping over `k -> _predict_compression_ratio_by_score(k)`, a binary search can be used because
-        the compression ratio is monotonically increasing in k.
+        Helper function that determines which parameters to keep to reach a target size ratio.
+        Instead of looping over `k -> _predict_size_ratio_by_score(k)`, a binary search can be used because
+        the size ratio is monotonically increasing in k.
 
         Args:
-            compression_ratio: Target compression ratio.
+            size_ratio: Target size ratio.
             full: Whether to count the number of parameters of the entire model or only the parametrized modules.
                 See also `ParametrizedModel.get_num_params`.
 
-        Returns: Parameter masks indicating which parameters to keep to reach the target compression ratio.
+        Returns: Parameter masks indicating which parameters to keep to reach the target size ratio.
         """
-        if compression_ratio == 1.0:
+        if size_ratio == 1.0:
             return {p_name: torch.ones_like(score) for p_name, score in self.score_map.items()}
 
-        # Perform a binary search to find the smallest k such that the compression ratio is at least compression_ratio.
+        # Perform a binary search to find the smallest k such that the size ratio is at least size_ratio.
         # Here, k_lo and k_hi are the lower and upper bound of the search interval.
         k_lo, k_hi = 1, sum(score.numel() for score in self.score_map.values())
         while k_lo < k_hi:
             k_mid = (k_lo + k_hi + 1) // 2  # round up to ensure low <= mid
-            ratio, _ = self._predict_compression_ratio_by_score(k=k_mid, full=full)
-            if ratio > compression_ratio:
+            ratio, _ = self._predict_size_ratio_by_score(k=k_mid, full=full)
+            if ratio > size_ratio:
                 k_lo = k_mid
             else:
                 k_hi = k_mid - 1
         k = k_lo
         # TODO: handle tie-breaks
-        return self._predict_compression_ratio_by_score(k=k, full=full)[1]
+        return self._predict_size_ratio_by_score(k=k, full=full)[1]
 
-    def prune_model_by_score(self, compression_ratio: float, full: bool = False) -> None:
+    def prune_model_by_score(
+        self,
+        size_ratio: float | None = None,
+        compression_rate: float | None = None,
+        full: bool = False,
+    ) -> None:
         """
         This method prunes the target parameters of the model according to their scores to achieve
-        a given compression ratio.
+        a given size ratio.
 
         This can be efficiently implemented by a simple binary search strategy:
         We find the smallest number of parameters to be pruned according to the score map ranking
-        such that the resulting compression ratio is at least the target `compression_ratio`.
+        such that the resulting size ratio is at least the target `size_ratio`.
 
         Args:
-            compression_ratio: The target compression ratio.
+            size_ratio: The target size ratio, which is the ratio between the size of the compressed model and
+                the original model (where size is measured in number of parameters).
+                If not provided, `compression_rate` must be provided.
+            compression_rate: This is a convenience parameter that allows you to set the target compression rate
+                instead of `size_ratio`. It is equivalent to `size_ratio = 1.0 - compression_rate`.
+                If both `size_ratio` and `compression_rate` are provided, `size_ratio` is used.
             full: Whether to count the number of parameters of the entire model or only the parametrized modules.
                 See also `ParametrizedModel.get_num_params`.
         """
-        param_masks = self._get_param_masks(compression_ratio=compression_ratio, full=full)
+        if size_ratio is None and compression_rate is None:
+            raise ValueError("Either `size_ratio` or `compression_rate` must be provided.")
+        elif size_ratio is None and compression_rate is not None:
+            size_ratio = 1.0 - compression_rate
+        else:
+            logger.warning("Both `size_ratio` and `compression_rate` are provided. Using `size_ratio`.")
+
+        param_masks = self._get_param_masks(size_ratio=size_ratio, full=full)
 
         # Reset the target parameters according to the parameter masks
         for p_name, param in self.get_target_params().items():

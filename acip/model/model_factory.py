@@ -91,7 +91,7 @@ class ACIPModelFactory(PretrainedModelFactory):
             pretrained_model_config: Optional config passed to `from_pretrained` or the model constructor.
             pretrained_model_kwargs: Keyword arguments passed to `from_pretrained` or the model constructor.
             prune_to_ratio: If a float between 0 and 1 is provided, the created model will be directly pruned
-                according to this compression ratio. See `ACIPModel.prune_model_by_score`.
+                according to this size ratio. See `ACIPModel.prune_model_by_score`.
             compress_and_unparametrize: If True, the parametrized modules of the created model will compressed
                 according to their pruning state (controlled by `prune_to_ratio`) and non-compressible modules
                 will be unparametrized. See `ParametrizedModel.compress`. Note that compared to `prune_to_ratio`,
@@ -115,9 +115,9 @@ class ACIPModelFactory(PretrainedModelFactory):
         assert isinstance(model, ACIPModel), "Model must be of type ACIPModel"
 
         if self.prune_to_ratio is not None:
-            # Prune target params to desired compression ratio ...
-            model.prune_model_by_score(compression_ratio=self.prune_to_ratio, full=self.measure_ratio_full)
-            logger.info(f"Pruned model to compression ratio {self.prune_to_ratio}.")
+            # Prune target params to desired size ratio ...
+            model.prune_model_by_score(size_ratio=self.prune_to_ratio, full=self.measure_ratio_full)
+            logger.info(f"Pruned model to size ratio {self.prune_to_ratio}.")
 
             # ... and compress.
             if self.compress_and_unparametrize:

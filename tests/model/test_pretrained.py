@@ -146,15 +146,13 @@ def test_acip_model_compression(acip_model_config, temp_dir, test_device):
         acip_model_copy = ACIPModel.from_pretrained(save_path, with_init_empty_weights=True).to(test_device)
         model_compare(acip_model, acip_model_copy)
 
-        compression_ratio = 0.75
-        acip_model.prune_model_by_score(compression_ratio=compression_ratio)
-        acip_model_copy.prune_model_by_score(compression_ratio=compression_ratio)
+        size_ratio = 0.75
+        acip_model.prune_model_by_score(size_ratio=size_ratio)
+        acip_model_copy.prune_model_by_score(size_ratio=size_ratio)
         model_compare(acip_model, acip_model_copy)
 
-        print(f"Actual compression ratio: {acip_model.get_compression_ratio()}")
-        assert (
-            math.fabs(acip_model.get_compression_ratio() - compression_ratio) < 0.01
-        ), f"Compression ratio should be close to {compression_ratio}"
+        print(f"Actual size ratio: {acip_model.get_size_ratio()}")
+        assert math.fabs(acip_model.get_size_ratio() - size_ratio) < 0.01, f"Size ratio should be close to {size_ratio}"
 
         acip_model_copy.compress()
         forward_compare(acip_model, acip_model_copy, atol=1e-3)

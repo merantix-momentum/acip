@@ -29,8 +29,9 @@ Official implementation of ACIP (Adaptive Compression by Iterative Pruning).
 Just give it a try with only 3 lines of code:
 ```python
 from transformers import AutoModel
+
 model = AutoModel.from_pretrained("MerantixMomentum/ACIP-llama2-7b", trust_remote_code=True)
-model.prune_model_by_score(compression_ratio=0.5).compress()
+model.prune_model_by_score(size_ratio=0.5).compress()
 ```
 See our [project website](https://acip.merantix-momentum.com/) for a quick overview of the ACIP algorithm or dive into the full details with our paper
 
@@ -53,10 +54,10 @@ from transformers import AutoModel
 
 model = AutoModel.from_pretrained("MerantixMomentum/ACIP-llama2-7b", trust_remote_code=True)
 ```
-This will download and create a fully parameterized [ACIP model](acip/core/acip_model.py) that can be pruned to any compression ratio you wish.
+This will download and create a fully parameterized [ACIP model](acip/core/acip_model.py) that can be pruned to any compression rate you wish.
 For example,
 ```python
-model.prune_model_by_score(compression_ratio=0.4)
+model.prune_model_by_score(size_ratio=0.4)
 ```
 will prune `model` to 40% if its original size measured in number of parameters, i.e., 60% compression rate.
 A unique feature of ACIP is that this operation is revertible in the sense that you can rerun `model.prune_model_by_score` as often as you like to evaluate your model at different sizes. Finally, you can "commit" to a certain ratio and run
@@ -73,7 +74,7 @@ to save even more memory (we have only tested 4bit quantization with `bitsandbyt
 
 **🚀 That's it! You can now use your compressed model for inference or fine-tuning as any other Causal Language Model from 🤗 transformers.**
 
-> ❗ The parameter `compression_ratio` ranges from 1.0 to 0.0, indicating the model size after compression. For example, 0.4 means that the model has only 40% of the original number of parameters and 1.0 means no compression at all.
+> ℹ️ The parameter `size_ratio` ranges from 1.0 to 0.0, indicating the model size after compression. For example, 0.4 means that the model has only 40% of the original number of parameters and 1.0 means no compression at all. Alternatively, you can also set `compression_rate` in `prune_model_by_score`, which is equivalent to `size_ratio = 1.0 - compression_rate`.
 
 ## Installation
 
@@ -202,7 +203,7 @@ Details on sub-configs:
 - [`training.optimizer_factory`](config/training/optimizer): Configures the [optimizer (factory)](acip/training/optimizer.py) used by [`BaseLitModule`](acip/training/pl_module.py). As for `training.objective`, this sub-config is highly entrypoint-specific and selected by the (top-level) [configs](config/entrypoints).
 - `training.callbacks`: Following PL's best practices, we make use of several callbacks to flexibly extent the training process by additional functionality. `training.callbacks` compiles a dictionary of all callbacks that will be passed to the PL Trainer. The injection of callbacks is managed by the (top-level) [entrypoint configs](config/entrypoints) and is organized in three different sub-classes:
   - [`training.acip`](config/training/acip/default.yaml): Schedules the ACIP algorithm and score map updates, see also [here](acip/training/acip.py). **Note**: Only used by the [acip_compress entrypoint](#acip_compress) and all key parameters are conveniently managed by the [acip sub-config](#acip-config).
-  - [`training.monitoring`](config/training/monitoring): Configures one or more [callbacks](acip/training/monitoring.py) that monitor the training process and important model characteristics (e.g., compression ratio and gradient norms) with frequency `training.log_every_n_train_steps`.
+  - [`training.monitoring`](config/training/monitoring): Configures one or more [callbacks](acip/training/monitoring.py) that monitor the training process and important model characteristics (e.g., size ratio and gradient norms) with frequency `training.log_every_n_train_steps`.
   - [`training.benchmarking`](config/training/benchmarking): Configures one or more [callbacks](acip/training/benchmarking.py) that benchmark the (ACIP) model at the beginning and end of training. Conceptually, these callbacks are similar to `training.monitoring` but can involve a more extensive evaluation that is not practical during training.
 </details>
 
@@ -273,10 +274,10 @@ You can add you own config to [config/options](config/options) or choose one or 
 
 This is the central entrypoint to run the ACIP algorithm from our [paper](https://arxiv.org/abs/2502.01717), see there for more conceptual details.
 For this particular entrypoint, the following options of the [acip sub-config](#acip-config) are important:
-- `acip.stop_ratio`: Compression ratio at which to stop ACIP.
+- `acip.stop_ratio`: Size ratio at which to stop ACIP.
 - `acip.post_tune_steps`: How many steps to continue optimizing the adapters after ACIP stopped.
 - `acip.lr`: Global learning rate for AdamW to tune the mask parameters and adapters.
-- `acip.test_ratios`: Compression ratios at which to [benchmark](config/training/benchmarking/default.yaml) the final ACIP model. These results will be also save to the output directory.
+- `acip.test_ratios`: Size ratios at which to [benchmark](config/training/benchmarking/default.yaml) the final ACIP model. These results will be also save to the output directory.
 - `acip.quantize_weights`: If true, the U and V weights of the SVD parametrization will be quantized according to a [quantization config](config/model/model_factory/acip_config/weight_quantization/bnb_4bit_fp4.yaml).
 - The [ACIP regularization parameter scheduler](acip/training/acip.py) can be controlled through `reg_scheduler_start_weight`, `reg_scheduler_update_every`, and `reg_scheduler_update_factor`.
 - `acip.save.path`: Where to save the final ACIP model. Defaults to `<run.path>/model`.
@@ -298,7 +299,7 @@ You can fine more examples of overrides in our [paper experiments](config/experi
 This is a complementary entrypoint that allows you to fine-tune an ACIP model obtained from [acip_compress](#acip_compress). Note that fine-tuning only concerns the adapters (LoRA parameters), not the mask parameters, which remain frozen.
 For this particular entrypoint, the following options of the [acip sub-config](#acip-config) are important:
 - `acip.finetune_steps`: How many steps to fine-tune the adapters.
-- `acip.prune_to_ratio`: Compression ratio to which the loaded ACIP model is to be pruned (and compressed). This operation is not revertible and you will obtain a fine-tuned ACIP model at this particular compression ratio.
+- `acip.prune_to_ratio`: Size ratio to which the loaded ACIP model is to be pruned (and compressed). This operation is not revertible and you will obtain a fine-tuned ACIP model at this particular size ratio.
 - `acip.lr`: Global learning rate for AdamW to tune the adapters.
 - `acip.quantize_weights`: If true, the U and V weights of the SVD parametrization will be quantized according to a [quantization config](config/model/model_factory/acip_config/weight_quantization/bnb_4bit_fp4.yaml).
 - `acip.load.model_name_or_path`: Path to the ACIP model to be fine-tuned. Could also be an ACIP model from our [🤗 Hub](https://huggingface.co/collections/MerantixMomentum/acip-67fe8f7b9f3132468a117ea6).
@@ -322,8 +323,8 @@ Relevant sub-config overrides:
 
 This is entrypoint is similar to [acip_finetune](#acip_finetune), but only evaluates a ready-to-use ACIP model without any fine-tuning. The specific evaluation routine is controlled by the [`training/benchmarking`](config/training/benchmarking) sub-config, see below.
 For this particular entrypoint, the following options of the [acip sub-config](#acip-config) are important:
-- `acip.prune_to_ratio`: Compression ratio to which the loaded ACIP model is to be pruned. If `null` (default), the model is loaded as is.
-- `acip.test_ratios`: Compression ratios at which to evaluate the ACIP model. These results will be also save to the output directory. If `null`, the model is only evaluated at `acip.prune_to_ratio`.
+- `acip.prune_to_ratio`: Size ratio to which the loaded ACIP model is to be pruned. If `null` (default), the model is loaded as is.
+- `acip.test_ratios`: Size ratios at which to evaluate the ACIP model. These results will be also save to the output directory. If `null`, the model is only evaluated at `acip.prune_to_ratio`.
 - `acip.compress_and_unparametrize`: Whether to actually compress the model (cannot be reverted). Activating this flag only makes sense if `acip.prune_to_ratio` is not `null` and `acip.test_ratios=null`.
 - `acip.quantize_weights`: If true, the U and V weights of the SVD parametrization will be quantized according to a [quantization config](config/model/model_factory/acip_config/weight_quantization/bnb_4bit_fp4.yaml).
 - `acip.load.model_name_or_path`: Path to the ACIP model to be evaluated. Could also be an ACIP model from our [🤗 Hub](https://huggingface.co/collections/MerantixMomentum/acip-67fe8f7b9f3132468a117ea6). 

@@ -353,7 +353,7 @@ class ParametrizedModel(PreTrainedModel):
     The corresponding modules are accessed via `parametrized_modules`, `adapter_modules`,
     and `quantized_modules`, respectively.
     The class also provides several convenience methods to manage the parametrization: `get_target_params`,
-    `get_num_params`, `get_compression_ratio`, `reset_target_params`, `compress`.
+    `get_num_params`, `get_size_ratio`, `reset_target_params`, `compress`.
 
     Standard functionality (`forward`, `generate`, `save_pretrained`, `from_pretrained`) is essentially forwarded
     to the wrapped model.
@@ -698,9 +698,9 @@ class ParametrizedModel(PreTrainedModel):
             num_params = 1e-6
         return num_params
 
-    def get_compression_ratio(self, full: bool = False, target_params: dict[str, torch.Tensor] | None = None) -> float:
+    def get_size_ratio(self, full: bool = False, target_params: dict[str, torch.Tensor] | None = None) -> float:
         """
-        Convenience function to compute the compression ratio of the present model.
+        Convenience function to compute the size ratio of the present model.
 
         See Also:
             `get_num_params`

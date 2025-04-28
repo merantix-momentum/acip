@@ -56,7 +56,7 @@ training:
 # Define ACIP-finetune-specific config.
 acip:
   quantize_weights: false  # optionally quantize U and V weights of SVD parametrization
-  prune_to_ratio: 0.4  # target compression ratio at which the model is materialized before finetuning
+  prune_to_ratio: 0.4  # target size ratio at which the model is materialized before finetuning
   measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
   compress_and_unparametrize: true  # whether to actually compress the model (cannot be reverted)
   finetune_steps: 25000

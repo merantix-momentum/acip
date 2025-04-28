@@ -68,13 +68,17 @@ def main(cfg: DictConfig) -> None:
     # Upload all additional files
     parent_dir = os.path.join(PROJECT_ROOT, "acip", "core")
 
-    # Render temporary README and fill in templates
+    # Render temporary model card (README) and fill in templates
     with open(os.path.join(parent_dir, "README_template.md"), "r") as f:
         readme = f.read()
     readme = readme.replace("{{BASE_MODEL}}", cfg.model.base_model_name_or_path)
     readme = readme.replace("{{REPO_ID}}", cfg.acip.hub.repo_id)
     readme = readme.replace("{{LICENSE}}", cfg.acip.hub.license)
     readme = readme.replace("{{LICENSE_TEXT}}", cfg.acip.hub.license_text)
+    readme = readme.replace("{{METRICS}}", str(cfg.acip.hub.metrics))
+    readme = readme.replace("{{LANGUAGE}}", str(cfg.acip.hub.language))
+    readme = readme.replace("{{DATASETS}}", str(cfg.acip.hub.datasets))
+    readme = readme.replace("{{TAGS}}", str(cfg.acip.hub.tags))
     with open(os.path.join(parent_dir, "README.md"), "w") as f:
         f.write(readme)
 
