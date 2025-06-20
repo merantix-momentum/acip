@@ -30,7 +30,7 @@ Just give it a try with only 3 lines of code:
 ```python
 from transformers import AutoModel
 
-model = AutoModel.from_pretrained("MerantixMomentum/ACIP-llama2-7b", trust_remote_code=True)
+model = AutoModel.from_pretrained("MerantixMomentum/acip_llama2_7b", trust_remote_code=True)
 model.prune_model_by_score(size_ratio=0.5).compress()
 ```
 See our [project website](https://acip.merantix-momentum.com/) for a quick overview of the ACIP algorithm or dive into the full details with our paper
@@ -52,7 +52,7 @@ Just select any ACIP model and load it via `from_pretrained` like this one:
 ```python
 from transformers import AutoModel
 
-model = AutoModel.from_pretrained("MerantixMomentum/ACIP-llama2-7b", trust_remote_code=True)
+model = AutoModel.from_pretrained("MerantixMomentum/acip_llama2_7b", trust_remote_code=True)
 ```
 This will download and create a fully parameterized [ACIP model](acip/core/acip_model.py) that can be pruned to any compression rate you wish.
 For example,

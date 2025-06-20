@@ -52,6 +52,7 @@ acip:
   stop_ratio: 0.4  # size ratio at which to stop ACIP (subsequent compression should not be lower)
   stop_score_map_at_ratio: # means that the score map update continues until the stopping criterion reached
   measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
+  pruning_config:  # additional options for the pruning process, None means the default config
   post_tune_steps: 1000  # how many steps to continue optimizing adapters after ACIP stopped
   # Parameters of the ACIP regularization parameter scheduler (see acip.core.ACIPScheduler).
   reg_scheduler_start_weight: 1e-3

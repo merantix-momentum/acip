@@ -1,3 +1,4 @@
+from logging import getLogger
 from typing import Any
 
 import torch
@@ -5,11 +6,12 @@ import wandb
 from lightning import pytorch as pl
 from lightning_utilities.core.rank_zero import rank_zero_only
 
-from acip.core.acip_model import ACIPModel
+from acip.core.acip_model import ACIPModel, ACIPPruningConfig
 from acip.eval.evaluator import ModelEvaluator
-from acip.training.monitoring import logger
 from acip.training.pl_module import BaseLitModule
 from acip.training.utils import create_eval_dataframe, generate_params_plot
+
+logger = getLogger(__name__)
 
 
 class ModelBenchmarker(pl.Callback):
@@ -27,6 +29,7 @@ class ModelBenchmarker(pl.Callback):
         evaluator: ModelEvaluator,
         test_ratios: list[float] | None = None,
         measure_ratio_full: bool = False,
+        pruning_config: ACIPPruningConfig | None = None,
     ):
         """
         Args:
@@ -37,10 +40,12 @@ class ModelBenchmarker(pl.Callback):
             measure_ratio_full: If `True`, all parameters of the model are counted when pruning to a target ratio
                 is performed, if `False` only the parameters of the parametrized modules are counted (default).
                 See `full` flag in `ACIPModel.prune_model_by_score`.
+            pruning_config: Optional config for the pruning process passed to `ACIPModel.prune_model_by_score`.
         """
         self.evaluator = evaluator
         self.test_ratios = test_ratios
         self.measure_ratio_full = measure_ratio_full
+        self.pruning_config = pruning_config
 
         # Stores evaluation results. The key indicates the point of evaluation and
         # the value contains the actual results as a dict (output of `self.evaluator(...)`).
@@ -66,7 +71,9 @@ class ModelBenchmarker(pl.Callback):
             # Benchmark model at each size ratio
             for ratio in self.test_ratios:
                 logger.info(f"Benchmarking model at size ratio {ratio}.")
-                pl_module.model.prune_model_by_score(size_ratio=ratio, full=self.measure_ratio_full)
+                pl_module.model.prune_model_by_score(
+                    size_ratio=ratio, full=self.measure_ratio_full, pruning_config=self.pruning_config
+                )
                 self.results[f"at_end_ratio{ratio}"] = self.evaluator(model=pl_module.model)
                 # Add target size ratio to results for better identification
                 self.results[f"at_end_ratio{ratio}"]["target_size_ratio"] = ratio
