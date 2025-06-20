@@ -10,4 +10,5 @@ model_factory:
   prune_to_ratio: ${acip.prune_to_ratio}
   compress_and_unparametrize: ${acip.compress_and_unparametrize}
   measure_ratio_full: ${acip.measure_ratio_full}
+  pruning_config: ${acip.pruning_config}
   quantize_weights: ${acip.quantize_weights}

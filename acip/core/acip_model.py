@@ -1,7 +1,9 @@
 import logging
+from dataclasses import dataclass, field
 from typing import Any
 
 import torch
+from peft.tuners.lora.layer import BaseTunerLayer
 from transformers import PreTrainedModel
 
 from .parametrized_model import ParametrizedModel, ParametrizedModelConfig
@@ -19,6 +21,28 @@ class ACIPModelConfig(ParametrizedModelConfig):
     """
 
     model_type = "acip_model"
+
+
+@dataclass
+class ACIPPruningConfig:
+    """
+    Additional configuration options for `ACIPModel.prune_model_by_score`.
+
+    Attributes:
+        reset_layers: If `True`, incompressible parametrized modules will be reset to their original state.
+            Here, "incompressible" means that size ratio of the layer is larger than `reset_layers_threshold`.
+        reset_layers_threshold: Threshold for resetting incompressible parametrized modules. The default of 1.0 means
+            that the module is as large as the original one.
+        reset_layers_excluded: List of modules to exclude from resetting. It is a match when the module name
+            contains any of the strings in the list.
+        reset_adapters: If `True`, the adapter modules will be reset to their original state as well when
+            the corresponding parametrized module is incompressible.
+    """
+
+    reset_layers: bool = False
+    reset_layers_threshold: float = 1.0
+    reset_layers_excluded: list[str] = field(default_factory=list)
+    reset_adapters: bool = False
 
 
 class ACIPModel(ParametrizedModel):
@@ -156,6 +180,7 @@ class ACIPModel(ParametrizedModel):
         size_ratio: float | None = None,
         compression_rate: float | None = None,
         full: bool = False,
+        pruning_config: ACIPPruningConfig | None = None,
     ) -> None:
         """
         This method prunes the target parameters of the model according to their scores to achieve
@@ -174,13 +199,18 @@ class ACIPModel(ParametrizedModel):
                 If both `size_ratio` and `compression_rate` are provided, `size_ratio` is used.
             full: Whether to count the number of parameters of the entire model or only the parametrized modules.
                 See also `ParametrizedModel.get_num_params`.
+            pruning_config: Additional options for the pruning process configuring how incompressible parametrized
+                modules are handled. `None` means that the default config is used.
         """
         if size_ratio is None and compression_rate is None:
             raise ValueError("Either `size_ratio` or `compression_rate` must be provided.")
         elif size_ratio is None and compression_rate is not None:
             size_ratio = 1.0 - compression_rate
-        else:
+        elif size_ratio is not None and compression_rate is not None:
             logger.warning("Both `size_ratio` and `compression_rate` are provided. Using `size_ratio`.")
+
+        if pruning_config is None:
+            pruning_config = ACIPPruningConfig()
 
         param_masks = self._get_param_masks(size_ratio=size_ratio, full=full)
 
@@ -189,8 +219,32 @@ class ACIPModel(ParametrizedModel):
             param.data[param_masks[p_name] > 0.0] = 1.0  # dummy value, will be rescaled by reset_target_params
             param.data[param_masks[p_name] == 0.0] = 0.0
         for m_name, module in self.parametrized_modules.items():
+            # check if parametrized module matches with any of the parameter masks
             if any(p_name.startswith(m_name) for p_name in param_masks.keys()):
-                module.parametrization.reset_target_params(mode="nonzero")
+                # get parent of module
+                parent_m_name, _ = m_name.rsplit(".", 1)
+                base_module = self.model.get_submodule(parent_m_name)
+                # if applicable, (re-)enable adapters because they might have been disabled by a previous reset
+                if pruning_config.reset_adapters and isinstance(base_module, BaseTunerLayer):
+                    base_module.enable_adapters(True)
+
+                if (
+                    pruning_config.reset_layers
+                    and (not any(layer in m_name for layer in pruning_config.reset_layers_excluded))
+                    and (
+                        module.parametrization.get_num_params(compressed=True) / module.parametrization.get_num_params()
+                        >= pruning_config.reset_layers_threshold
+                    )
+                ):
+                    # reset target params ...
+                    module.parametrization.reset_target_params(mode="full")
+                    logger.debug(f"Reset target params for layer {parent_m_name}.")
+                    # ... and if applicable, reset associated adapters
+                    if pruning_config.reset_adapters and isinstance(base_module, BaseTunerLayer):
+                        base_module.enable_adapters(False)
+                        logger.debug(f"Disabled adapters for layer {parent_m_name}.")
+                else:
+                    module.parametrization.reset_target_params(mode="nonzero")
 
 
 # Register ACIPModelConfig and ACIPModel for AutoModel

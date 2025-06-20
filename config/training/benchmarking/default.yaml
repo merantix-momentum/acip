@@ -14,3 +14,4 @@ callbacks:
         generation: ${eval.evaluator.generation}
     test_ratios: ${oc.select:acip.test_ratios, null}  # acip.test_ratios does not exist for fine-tuning, therefore None
     measure_ratio_full: ${acip.measure_ratio_full}
+    pruning_config: ${acip.pruning_config}

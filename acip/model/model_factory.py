@@ -3,7 +3,7 @@ from typing import Any, Type
 
 from transformers import PretrainedConfig, PreTrainedModel
 
-from acip.core.acip_model import ACIPModel
+from acip.core.acip_model import ACIPModel, ACIPPruningConfig
 from acip.core.utils import get_class_from_str
 
 logger = getLogger(__name__)
@@ -82,6 +82,7 @@ class ACIPModelFactory(PretrainedModelFactory):
         prune_to_ratio: float | None = None,
         compress_and_unparametrize: bool = True,
         measure_ratio_full: bool = False,
+        pruning_config: ACIPPruningConfig | None = None,
         quantize_weights: bool = False,
     ):
         """
@@ -99,6 +100,7 @@ class ACIPModelFactory(PretrainedModelFactory):
             measure_ratio_full: If `True`, all parameters of the model are counted when pruning to a target ratio
                 is performed, if `False` only the parameters of the parametrized modules are counted (default).
                 See `full` flag in `ACIPModel.prune_model_by_score`.
+            pruning_config: Optional config for the pruning process passed to `ACIPModel.prune_model_by_score`.
             quantize_weights: If True, the created model will be directly quantized. See `ParametrizedModel.quantize`.
                 Note that this operation cannot be reverted.
         """
@@ -108,6 +110,7 @@ class ACIPModelFactory(PretrainedModelFactory):
         self.prune_to_ratio = prune_to_ratio
         self.compress_and_unparametrize = compress_and_unparametrize
         self.measure_ratio_full = measure_ratio_full
+        self.pruning_config = pruning_config
         self.quantize_weights = quantize_weights
 
     def create_model(self) -> ACIPModel:
@@ -116,7 +119,9 @@ class ACIPModelFactory(PretrainedModelFactory):
 
         if self.prune_to_ratio is not None:
             # Prune target params to desired size ratio ...
-            model.prune_model_by_score(size_ratio=self.prune_to_ratio, full=self.measure_ratio_full)
+            model.prune_model_by_score(
+                size_ratio=self.prune_to_ratio, full=self.measure_ratio_full, pruning_config=self.pruning_config
+            )
             logger.info(f"Pruned model to size ratio {self.prune_to_ratio}.")
 
             # ... and compress.

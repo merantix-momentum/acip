@@ -34,4 +34,5 @@ acip:
   quantize_weights: false
   prune_to_ratio:
   measure_ratio_full: false
+  pruning_config:
   compress_and_unparametrize: false

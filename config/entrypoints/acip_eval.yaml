@@ -51,6 +51,7 @@ acip:
   # If "test_ratios" is specified, this is ignored and you can leave it None.
   prune_to_ratio:
   measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
+  pruning_config:  # additional options for the pruning process, None means the default config
   compress_and_unparametrize: false  # whether to actually compress the model (cannot be reverted)
   # Size ratios at which to evaluate the final model. None means the ACIP model is evaluated at it is.
   test_ratios: [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]

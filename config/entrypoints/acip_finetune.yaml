@@ -58,6 +58,7 @@ acip:
   quantize_weights: false  # optionally quantize U and V weights of SVD parametrization
   prune_to_ratio: 0.4  # target size ratio at which the model is materialized before finetuning
   measure_ratio_full: false  # count all parameters while compressing (true) or just all parametrized modules (false)
+  pruning_config:  # additional options for the pruning process, None means the default config
   compress_and_unparametrize: true  # whether to actually compress the model (cannot be reverted)
   finetune_steps: 25000
   lr: 2e-4
