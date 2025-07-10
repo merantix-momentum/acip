@@ -22,6 +22,8 @@ python -m acip.entrypoints.acip_compress experiment=paper/llama1_7b/ablation/com
 # requires ACIP model from experiment=paper/llama1_7b/ablation/compress_quantized
 python -m acip.entrypoints.acip_compress experiment=paper/llama1_7b/ablation/compress_quantized_transfer
 python -m acip.entrypoints.acip_compress experiment=paper/llama2_13b/ablation/compress_with_up_proj
+python -m acip.entrypoints.acip_eval experiment=paper/llama1_7b/ablation/eval_pruning_reset_layers acip.pruning_config.reset_layers=true acip.pruning_config.reset_adapters=true
+python -m acip.entrypoints.acip_eval experiment=paper/llama1_7b/ablation/eval_pruning_reset_layers acip.pruning_config.reset_layers=false acip.pruning_config.reset_adapters=false
 
 # ----- acip_finetune (requires ACIP models from acip_compress) ------
 python -m acip.entrypoints.acip_finetune --multirun experiment=paper/llama1_7b/finetune acip.prune_to_ratio=0.4,0.5,0.6,0.7,0.8,0.9,1.0

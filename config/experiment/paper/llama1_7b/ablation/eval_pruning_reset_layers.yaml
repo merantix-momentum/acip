@@ -1,0 +1,15 @@
+# @package _global_
+
+# Ablation experiment: Evaluate the model where reset_layers is activated (see ACIPPruningConfig).
+
+defaults:
+  - /experiment/paper/llama1_7b@_here_: finetune
+
+acip:
+  pruning_config:
+    _target_: acip.core.acip_model.ACIPPruningConfig
+    reset_layers: true
+    reset_adapters: true
+
+run:
+  id: ${run.type}__${model.identifier}__reset_layers${acip.pruning_config.reset_layers}
